@@ -1,0 +1,120 @@
+name: CI
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+env:
+  PYTHONUTF8: '1'
+  RETRIEVER: stub
+  LLM_PROVIDER: stub
+  REDIS_FAKE: 'true'
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r api/requirements-dev.txt -r indexer/requirements-dev.txt -r corpus/requirements-dev.txt
+      - run: ruff check api indexer eval corpus scripts/deploy.py scripts/cluster.py scripts/validate_manifests.py scripts/collect_evidence.py
+      - run: mypy --config-file api/pyproject.toml api/app
+      - run: mypy --config-file indexer/pyproject.toml indexer/pipeline
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r api/requirements-dev.txt -r indexer/requirements-dev.txt -r corpus/requirements-dev.txt
+      - run: pytest --cov=api/app --cov-fail-under=60 --cov-report=term-missing
+  manifests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml==6.0.2
+      - run: bash scripts/install_ci_tools.sh
+      - run: python scripts/validate_manifests.py --kubeconform kubeconform
+      - run: actionlint
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build all three images and transfer exact images to downstream jobs
+        env:
+          TAG: ${{ github.sha }}
+        run: |
+          docker build --provenance=false -t rahbar-api:$TAG api
+          docker build --provenance=false -f indexer/Dockerfile -t rahbar-indexer:$TAG .
+          docker build --provenance=false -t rahbar-ui:$TAG ui
+          mkdir -p .artifacts
+          docker save --platform linux/amd64 -o .artifacts/images.tar rahbar-api:$TAG rahbar-indexer:$TAG rahbar-ui:$TAG
+      - uses: actions/upload-artifact@v4
+        with:
+          name: images
+          path: .artifacts/images.tar
+          retention-days: 1
+  scan:
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: images
+          path: .artifacts
+      - run: docker load -i .artifacts/images.tar
+      - run: bash scripts/install_ci_tools.sh
+      - env:
+          TAG: ${{ github.sha }}
+        run: |
+          for image in api indexer ui; do
+            trivy image --scanners vuln --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 rahbar-$image:$TAG
+          done
+  e2e-eval:
+    needs: [lint, test, manifests, scan]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      KUBECONFIG: ${{ github.workspace }}/.artifacts/kubeconfig
+      TAG: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install httpx==0.28.1 pyyaml==6.0.2
+      - run: bash scripts/install_ci_tools.sh
+      - uses: actions/download-artifact@v4
+        with:
+          name: images
+          path: .artifacts
+      - run: docker load -i .artifacts/images.tar
+      - run: python scripts/cluster.py --name rahbar-ci
+      - run: kind load image-archive --name rahbar-ci .artifacts/images.tar
+      - run: python scripts/deploy.py --context kind-rahbar-ci --overlay k8s/overlays/ci --tag "$TAG"
+      - run: kubectl rollout status deployment/api --context kind-rahbar-ci -n rahbar --timeout=300s
+      - name: Ingress fixture gate (real Chroma and Redis)
+        run: |
+          curl --fail --retry 10 --retry-all-errors --retry-delay 2 http://127.0.0.1:18080/readyz -H 'Host: rahbar.local'
+          curl --fail http://127.0.0.1:18080/api/ask -H 'Host: rahbar.local' -H 'Content-Type: application/json' -d '{"question":"When is a student placed on academic warning?"}'
+          python eval/run_eval.py --api http://127.0.0.1:18080 --host rahbar.local --golden eval/fixtures/golden.fixture.yaml --baseline eval/fixtures/baseline.fixture.json --out .artifacts/results.fixture.json
+      - run: python scripts/acceptance.py --context kind-rahbar-ci --api http://127.0.0.1:18080
+      - if: always()
+        run: python scripts/collect_evidence.py --context kind-rahbar-ci
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fixture-evidence
+          path: |
+            .artifacts/diagnostics.txt
+            .artifacts/results.fixture.json
+            .artifacts/acceptance.json
+          retention-days: 14

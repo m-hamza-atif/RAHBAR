@@ -1,0 +1,86 @@
+name: CD
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r api/requirements-dev.txt -r indexer/requirements-dev.txt -r corpus/requirements-dev.txt
+      - run: pytest --cov=api/app --cov-fail-under=60
+      - run: bash scripts/install_ci_tools.sh
+      - run: python scripts/validate_manifests.py --kubeconform kubeconform
+  build-push:
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - env:
+          OWNER: ${{ secrets.DOCKERHUB_USERNAME }}
+          TAG: ${{ github.sha }}
+        run: |
+          docker build --provenance=false -t "$OWNER/rahbar-api:$TAG" api
+          docker build --provenance=false -f indexer/Dockerfile -t "$OWNER/rahbar-indexer:$TAG" .
+          docker build --provenance=false -t "$OWNER/rahbar-ui:$TAG" ui
+      - run: bash scripts/install_ci_tools.sh
+      - env:
+          OWNER: ${{ secrets.DOCKERHUB_USERNAME }}
+          TAG: ${{ github.sha }}
+        run: |
+          for image in api indexer ui; do
+            trivy image --scanners vuln --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 "$OWNER/rahbar-$image:$TAG"
+          done
+          for image in api indexer ui; do docker push "$OWNER/rahbar-$image:$TAG"; done
+  deploy:
+    needs: build-push
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      KUBECONFIG: ${{ github.workspace }}/.artifacts/kubeconfig
+      OWNER: ${{ secrets.DOCKERHUB_USERNAME }}
+      TAG: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - run: pip install httpx==0.28.1 pyyaml==6.0.2
+      - run: bash scripts/install_ci_tools.sh
+      - run: python scripts/cluster.py --name rahbar-cd
+      - name: Pull and load the published SHA images
+        run: |
+          for image in api indexer ui; do
+            docker pull "$OWNER/rahbar-$image:$TAG"
+            docker save --platform linux/amd64 -o .artifacts/deploy-image.tar "$OWNER/rahbar-$image:$TAG"
+            kind load image-archive --name rahbar-cd .artifacts/deploy-image.tar
+          done
+      - run: python scripts/deploy.py --context kind-rahbar-cd --overlay k8s/overlays/ci --image-prefix "$OWNER/" --tag "$TAG"
+      - run: kubectl rollout status deployment/api --context kind-rahbar-cd -n rahbar --timeout=300s
+      - name: Ephemeral fixture deployment acceptance through Ingress
+        run: |
+          curl --fail --retry 10 --retry-all-errors --retry-delay 2 http://127.0.0.1:18080/readyz -H 'Host: rahbar.local'
+          curl --fail http://127.0.0.1:18080/api/ask -H 'Host: rahbar.local' -H 'Content-Type: application/json' -d '{"question":"When is a student placed on academic warning?"}'
+          python eval/run_eval.py --api http://127.0.0.1:18080 --host rahbar.local --golden eval/fixtures/golden.fixture.yaml --baseline eval/fixtures/baseline.fixture.json --out .artifacts/results.fixture.json
+      - if: always()
+        run: python scripts/collect_evidence.py --context kind-rahbar-cd
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deployment-evidence
+          path: |
+            .artifacts/diagnostics.txt
+            .artifacts/results.fixture.json

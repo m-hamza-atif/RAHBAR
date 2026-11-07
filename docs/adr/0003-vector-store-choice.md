@@ -28,3 +28,23 @@ SQLite/in-process vectors were simpler for isolated demos but would not prove
 shared persistent service behavior across replicas. A larger managed vector
 service adds deployment/account requirements unnecessary for this corpus.
 A second Chroma collection for the answer cache was rejected in ADR 0002.
+
+## Partner B StatefulSet/security implementation
+
+`k8s/base/chroma.yaml:85` defines the 2 Gi claim mounted at `/data`, matching the
+pinned server's inspected `/config.yaml`. UID/fsGroup 10001 permits volume writes
+with a read-only root and bounded /tmp, without a privileged permission-fixing
+init container. One standard ClusterIP `chroma` Service suffices for one HTTP
+server; no extra headless Service or externally exposed data port is needed.
+
+The actual initial rollout exposed Kubernetes injecting `CHROMA_PORT=tcp://...`.
+Chroma's numeric PORT parser panicked. `enableServiceLinks: false` at
+`k8s/base/chroma.yaml:84` removes that implicit configuration. Recreating the failed
+pod picked up the correction while retaining its PVC. API/indexer addresses come
+from explicit ConfigMap values. Default-deny policy admits only those two callers
+on TCP 8000; live acceptance verifies UI denial and persistence across restart.
+
+A StatefulSet does not provide replication, backups or method-level authorization.
+Namespace RBAC must protect exec permissions and labels; a compromised API pod
+still has network-level access to the Chroma HTTP endpoint. Backups and external
+authentication belong to a separately approved persistent deployment.

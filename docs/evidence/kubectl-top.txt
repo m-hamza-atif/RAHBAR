@@ -1,0 +1,31 @@
+﻿# Evidence: Resource Utilization & Sizing (kubectl top)
+Timestamp: 2026-11-07T19:24:53Z
+Cluster: kind-rahbar-b
+Namespace: rahbar
+
+## 1. Node Resource Usage
+NAME                     CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)    rahbar-b-control-plane   154m         0%       2050Mi          13%         
+
+## 2. Steady-State Pod Resource Usage (kubectl top pods)
+NAME                     CPU(cores)   MEMORY(bytes)    api-64dc54667-ccngc      2m           67Mi             api-64dc54667-hznbk      2m           67Mi             api-64dc54667-m8c5k      2m           67Mi             chroma-0                 1m           20Mi             redis-5b65859689-55c79   7m           4Mi              ui-d86dd77f8-bzp8n       1m           2Mi             
+
+## 3. Configured Container Resource Requests and Limits (Applied Manifests)
+| Workload | Container | CPU Request | CPU Limit | Memory Request | Memory Limit |
+|----------|-----------|-------------|-----------|----------------|--------------|
+| api      | api       | 100m        | 500m      | 128Mi          | 512Mi        |
+| indexer  | indexer   | 250m        | 1500m     | 512Mi          | 1536Mi       |
+| chroma   | chroma    | 100m        | 500m      | 256Mi          | 1024Mi       |
+| redis    | redis     | 50m         | 200m      | 64Mi           | 256Mi        |
+| ui       | ui        | 25m         | 100m      | 32Mi           | 64Mi         |
+
+## 4. Measured Indexer Peak Memory (Kernel/Cgroup & Crictl Sampling During Reindex)
+Container runtime measurement during active fixture reindex:
+- Container ID: d7e3e0e7a38f6
+- Container Name: indexer
+- Active CPU: 108.68%
+- Measured Memory: 76.93 MB (~73.36 MiB)
+- Configured Limit: 1536 MiB
+- Safety Margin: 1536 MiB - 73.36 MiB = 1462.64 MiB (95.2% headroom)
+- Exit code: 0 (No OOMKilled / Exit 137)
+
+Note: On fixture indexing (16 chunks), indexing completes in ~5-8 seconds. Kubernetes metrics-server scrapes every 15-30s, so instantaneous completed batch jobs are not retained in metrics-server snapshots. Live cgroup/crictl sampling accurately captured the active execution peak.

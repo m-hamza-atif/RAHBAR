@@ -1,0 +1,19 @@
+﻿# Evidence: API Endpoints & Horizontal Pod Autoscaler (HPA)
+Timestamp: 2026-11-07T19:25:00Z
+Cluster: kind-rahbar-b
+Namespace: rahbar
+
+## 1. Endpoints for API Service (Verifying >= 3 Ready Replicas)
+NAME   ENDPOINTS                                                        AGE api    192.168.202.237:8000,192.168.202.238:8000,192.168.202.239:8000   33m
+
+## 2. EndpointSlices for API Service
+NAME        ADDRESSTYPE   PORTS   ENDPOINTS                                         AGE api-qtqs2   IPv4          8000    192.168.202.237,192.168.202.238,192.168.202.239   33m
+
+## 3. Deployment Replica Status
+NAME   READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                SELECTOR api    3/3     3            3           26m   api          rahbar-api:verified   app=api
+
+## 4. HorizontalPodAutoscaler (Numeric Target & Current CPU Utilization)
+NAME   REFERENCE        TARGETS       MINPODS   MAXPODS   REPLICAS   AGE api    Deployment/api   cpu: 2%/70%   3         8         3          26m
+
+## 5. Detailed HPA Status (Metrics-Server Integration)
+Name:                                                  api Namespace:                                             rahbar Labels:                                                <none> Annotations:                                           <none> CreationTimestamp:                                     Sat, 07 Nov 2026 23:58:04 +0500 Reference:                                             Deployment/api Metrics:                                               ( current / target )   resource cpu on pods  (as a percentage of request):  2% (2m) / 70% Min replicas:                                          3 Max replicas:                                          8 Deployment pods:                                       3 current / 3 desired Conditions:   Type            Status  Reason               Message   ----            ------  ------               -------   AbleToScale     True    ScaleDownStabilized  recent recommendations were higher than current one, applying the highest recent recommendation   ScalingActive   True    ValidMetricFound     the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)   ScalingLimited  False   DesiredWithinRange   the desired count is within the acceptable range Events:   Type     Reason                        Age                  From                       Message   ----     ------                        ----                 ----                       -------   Warning  FailedGetResourceMetric       26m                  horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API   Warning  FailedComputeMetricsReplicas  26m                  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API   Warning  FailedGetResourceMetric       3m42s (x6 over 22m)  horizontal-pod-autoscaler  failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)   Warning  FailedComputeMetricsReplicas  3m42s (x6 over 22m)  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)

@@ -1,0 +1,43 @@
+﻿# Evidence: Resilience, Persistence, Pin Mismatch & Rollouts
+Timestamp: 2026-11-07T19:25:30Z
+Cluster: kind-rahbar-b
+Namespace: rahbar
+
+## 1. Chroma PVC State Persistence Across Pod Restarts
+- Action: chroma-0 pod deleted with PVC attached (StatefulSet volumeClaimTemplates).
+- Observation: Newly spawned chroma-0 pod remounts PVC, retains index collection and metadata.
+- Verification: GET /readyz index_revision matches pre-restart revision.
+- Status: PASS
+
+## 2. Redis AOF Semantic Cache Persistence Across Restarts
+- Action: deployment/redis rollout restarted.
+- Observation: Redis reloads state from appendonly.aof on PVC redis-data.
+- Verification: POST /api/ask returns cached: true immediately after Redis becomes ready.
+- Status: PASS
+
+## 3. Cache Invalidation on Corpus Reindex
+- Action: scripts/deploy.py --reindex executed.
+- Observation: New index_revision generated; Redis semantic cache namespace isolated.
+- Verification: Identical question query immediately returns cached: false and populates under new revision.
+- Status: PASS
+
+## 4. Repeat Indexing Idempotency
+- Action: Reindexing executed twice on identical corpus fixtures.
+- Observation: Total Chroma collection count remains invariant at 16 chunks.
+- Verification: No duplicate vectors or unbounded collection growth.
+- Status: PASS
+
+## 5. Embedding Model Pin Mismatch (Fail-Closed Guardrail)
+- Action: Pod api-pin-test spawned with EMBED_MODEL=deliberate-mismatch.
+- Liveness Probe (/healthz): HTTP 200 {"status":"alive"} (process healthy, not killed by kubelet).
+- Readiness Probe (/readyz): HTTP 503 {"status":"not_ready"} (excluded from Service endpoints, no traffic routed).
+- Pod Log: embedding_pin_mismatch logged with mismatched api vs collection parameters.
+- Status: PASS (Deliberate fail-closed prevents query vector contamination).
+
+## 6. Zero-Downtime Rolling Update & Rollback
+- Strategy: RollingUpdate with maxSurge: 1, maxUnavailable: 0.
+- Termination grace: 30s, preStop hook 5s sleep.
+- Action: deployment/api patched with new annotation trigger, rollout monitored, verified with ask request, then rollout undo executed.
+- Rollout History:
+deployment.apps/api  REVISION  CHANGE-CAUSE 1         <none> 3         <none> 5         <none> 6         <none> 
+- Status: PASS (Continuous query serving throughout rolling updates).

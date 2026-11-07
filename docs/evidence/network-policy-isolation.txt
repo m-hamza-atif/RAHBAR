@@ -1,0 +1,35 @@
+﻿# Evidence: NetworkPolicy Enforcement & Traffic Isolation
+Timestamp: 2026-11-07T19:25:13Z
+Cluster: kind-rahbar-b
+CNI: Project Calico v3.29.3
+Namespace: rahbar
+
+## 1. Applied NetworkPolicies
+NAME             POD-SELECTOR   AGE api-data         app=api        34m api-ingress      app=api        34m chroma-clients   app=chroma     34m default-deny     <none>         34m dns              <none>         34m indexer-data     app=indexer    34m redis-clients    app=redis      34m ui-api           app=ui         34m ui-ingress       app=ui         34m
+
+## 2. API to Data Services (Allowed Path)
+Command: python TCP connection check from api pod
+Output:
+Redis DNS: 10.96.148.251 Redis TCP: connected Chroma DNS: 10.96.209.226 Chroma TCP: connected
+
+## 3. UI Internal DNS Resolution (Allowed Path)
+Command: nslookup from ui pod
+Output:
+Server:		10.96.0.10 Address:	10.96.0.10:53  Name:	chroma.rahbar.svc.cluster.local Address: 10.96.209.226 
+
+## 4. UI to Chroma Vector Store (Denied by Calico NetworkPolicy)
+Command: wget -T 3 -O - http://chroma:8000
+Output:
+Connecting to chroma:8000 (10.96.209.226:8000) wget: download timed out command terminated with exit code 1
+
+## 5. UI to Redis Semantic Cache (Denied by Calico NetworkPolicy)
+Command: wget -T 3 -O - http://redis:6379
+Output:
+Connecting to redis:6379 (10.96.148.251:6379) wget: download timed out command terminated with exit code 1
+
+## 6. Verification Summary
+- Default-deny ingress and egress applied across namespace rahbar.
+- DNS egress to kube-dns allowed.
+- Ingress controller allowed to route to UI (/) and API (/api, /healthz, /readyz).
+- UI pod allowed egress ONLY to API pod (cannot reach Chroma or Redis).
+- API and indexer pods allowed egress to Chroma and Redis.

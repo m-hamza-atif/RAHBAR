@@ -1,0 +1,529 @@
+﻿# Evidence: Ingress Fixture Evaluation & Quality Gate
+Timestamp: 2026-11-07T19:25:40Z
+Target Endpoint: http://127.0.0.1:18080 (Ingress / Traefik on port 30080)
+Host Header: rahbar.local
+Golden Set: eval/fixtures/golden.fixture.yaml
+Baseline: eval/fixtures/baseline.fixture.json
+Artifact: .artifacts/results.fixture.json
+
+## 1. Execution Summary
+- Total evaluated questions: 7
+  - ordinary: 1 (f01)
+  - version_sensitive: 3 (f02, f03, f07)
+  - exact_term: 1 (f04)
+  - must_abstain: 1 (f05)
+  - prompt_injection: 1 (f06)
+- Overall Recall@3: 0.833 (83.3%)
+- Overall Recall@5: 1.000 (100.0%)
+- Citation Validity: 1.000 (6/6 citations valid, 100%)
+- Must-Abstain Correctness: 1.000 (1/1 correct refusal, 100%)
+- Grounded Answer Rate: 1.000 (100%)
+- Exit Code: 0 (Gate Passed)
+
+## 2. Gate Comparison against Baseline
+- Baseline recall@5: 1.0
+- Measured recall@5: 1.0 (0.00 drop, well within <=0.05 limit)
+- Baseline citation validity: 1.0
+- Measured citation validity: 1.0 (>=0.95 required)
+- Baseline abstention correctness: 1.0
+- Measured abstention correctness: 1.0 (1.00 required)
+- Gate Result: PASS
+
+## 3. Results JSON Payload
+{
+  "recall_at_3": 0.8333333333333334,
+  "recall_at_5": 1.0,
+  "citation_validity": 1.0,
+  "citation_count": 6,
+  "valid_citation_count": 6,
+  "abstention_correctness": 1.0,
+  "must_abstain_count": 1,
+  "grounded_answer_rate": 1.0,
+  "by_type": {
+    "ordinary": {
+      "count": 1,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    },
+    "version_sensitive": {
+      "count": 3,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    },
+    "exact_term": {
+      "count": 1,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    },
+    "must_abstain": {
+      "count": 1,
+      "recall_at_3": null,
+      "recall_at_5": null
+    },
+    "prompt_injection": {
+      "count": 1,
+      "recall_at_3": 0.0,
+      "recall_at_5": 1.0
+    }
+  },
+  "rows": [
+    {
+      "id": "f01",
+      "type": "ordinary",
+      "must_abstain": false,
+      "relevant": [
+        {
+          "source": "academic-rules-2026.md",
+          "section": "Clause 2.1"
+        }
+      ],
+      "expect": "2.00",
+      "response": {
+        "request_id": "b8b0531b4ced4f038cfedd689cbee068",
+        "answer": "## 2.\nAcademic warning\n\n\n2.1 A student whose cumulative grade point average (CGPA) falls below 2.00 at the end of a regular semester is placed on academic warning.",
+        "citations": [
+          {
+            "source": "academic-rules-2026.md",
+            "section": "Clause 2.1",
+            "page": 1
+          }
+        ],
+        "answered_from_context": true,
+        "confidence": "low",
+        "retrieved": [
+          {
+            "chunk_id": "c1514febd6136f26cdc51bc22c11967d33e96df46163898196e5edda3c63af28",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 2.1",
+            "page": 1,
+            "score": 0.6350007
+          },
+          {
+            "chunk_id": "c05a6400ad3c2ae26da5cb1b8d8c7c3b0fc9131fe43e8e6c4038094fcf8c8cdd",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 2.2",
+            "page": 1,
+            "score": 0.51449585
+          },
+          {
+            "chunk_id": "5e8e9a91bf2c305bafd10b1a50f50c4eb156becab21855e6532d37a02b1e3db1",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 3.2",
+            "page": 1,
+            "score": 0.19611615000000004
+          },
+          {
+            "chunk_id": "08331b07e1e3254fe5bf0f9fcae7afeda90bb636e3cb1a2868b57b3b28566ee6",
+            "source": "fees-2026.md",
+            "section": "Clause 3.1",
+            "page": 1,
+            "score": 0.19425714000000005
+          },
+          {
+            "chunk_id": "9d924a34918376fc8e3064454c4f46ad65a695390297a2c251ac483f7a82a262",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 3.1",
+            "page": 1,
+            "score": 0.16984160000000004
+          }
+        ],
+        "provider": "stub",
+        "cached": false
+      },
+      "seconds": 0.02,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "citation_validity": 1.0,
+      "expected_text_match": true
+    },
+    {
+      "id": "f02",
+      "type": "version",
+      "must_abstain": false,
+      "relevant": [
+        {
+          "source": "academic-rules-2026.md",
+          "section": "Clause 1.1"
+        }
+      ],
+      "expect": "80",
+      "response": {
+        "request_id": "b3d5bb7850164285b2a5d3c7b4f11b28",
+        "answer": "## 1.\nAttendance\n\n\n1.1 A student must attend at least 80 percent of the lectures of each course to be allowed to sit the final examination.\nThe Head of Department may condone a further absence only for documented medical reasons.",
+        "citations": [
+          {
+            "source": "academic-rules-2026.md",
+            "section": "Clause 1.1",
+            "page": 1
+          }
+        ],
+        "answered_from_context": true,
+        "confidence": "low",
+        "retrieved": [
+          {
+            "chunk_id": "27e5077f487d5f709fe71f144044ce6a29b7db887f80c88bc9601cf8af572ece",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 1.2",
+            "page": 1,
+            "score": 0.42600644
+          },
+          {
+            "chunk_id": "93ce15aa94c532d058aa727a38a8c2e05b1302be80ec696d0d95e084ac3baa7e",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 1.1",
+            "page": 1,
+            "score": 0.3829709
+          },
+          {
+            "chunk_id": "9d924a34918376fc8e3064454c4f46ad65a695390297a2c251ac483f7a82a262",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 3.1",
+            "page": 1,
+            "score": 0.33075935
+          },
+          {
+            "chunk_id": "5e8e9a91bf2c305bafd10b1a50f50c4eb156becab21855e6532d37a02b1e3db1",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 3.2",
+            "page": 1,
+            "score": 0.286446
+          },
+          {
+            "chunk_id": "08331b07e1e3254fe5bf0f9fcae7afeda90bb636e3cb1a2868b57b3b28566ee6",
+            "source": "fees-2026.md",
+            "section": "Clause 3.1",
+            "page": 1,
+            "score": 0.2127981
+          }
+        ],
+        "provider": "stub",
+        "cached": false
+      },
+      "seconds": 0.02,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "citation_validity": 1.0,
+      "expected_text_match": true
+    },
+    {
+      "id": "f03",
+      "type": "version",
+      "must_abstain": false,
+      "relevant": [
+        {
+          "source": "academic-rules-2026.md",
+          "section": "Clause 3.1"
+        }
+      ],
+      "expect": "most recent",
+      "response": {
+        "request_id": "a69e397764984893929059e22d8ee494",
+        "answer": "## 3.\nRepeating a course\n\n\n3.1 A student may repeat any course to improve the CGPA.\nOnly the grade of the most recent attempt counts, even when it is lower than an earlier attempt.",
+        "citations": [
+          {
+            "source": "academic-rules-2026.md",
+            "section": "Clause 3.1",
+            "page": 1
+          }
+        ],
+        "answered_from_context": true,
+        "confidence": "low",
+        "retrieved": [
+          {
+            "chunk_id": "9d924a34918376fc8e3064454c4f46ad65a695390297a2c251ac483f7a82a262",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 3.1",
+            "page": 1,
+            "score": 0.32025634999999997
+          },
+          {
+            "chunk_id": "08331b07e1e3254fe5bf0f9fcae7afeda90bb636e3cb1a2868b57b3b28566ee6",
+            "source": "fees-2026.md",
+            "section": "Clause 3.1",
+            "page": 1,
+            "score": 0.27472114999999997
+          },
+          {
+            "chunk_id": "c05a6400ad3c2ae26da5cb1b8d8c7c3b0fc9131fe43e8e6c4038094fcf8c8cdd",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 2.2",
+            "page": 1,
+            "score": 0.24253565
+          },
+          {
+            "chunk_id": "27e5077f487d5f709fe71f144044ce6a29b7db887f80c88bc9601cf8af572ece",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 1.2",
+            "page": 1,
+            "score": 0.23570230000000003
+          },
+          {
+            "chunk_id": "c1514febd6136f26cdc51bc22c11967d33e96df46163898196e5edda3c63af28",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 2.1",
+            "page": 1,
+            "score": 0.17960529999999997
+          }
+        ],
+        "provider": "stub",
+        "cached": false
+      },
+      "seconds": 0.01,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "citation_validity": 1.0,
+      "expected_text_match": true
+    },
+    {
+      "id": "f04",
+      "type": "exact",
+      "must_abstain": false,
+      "relevant": [
+        {
+          "source": "fees-2026.md",
+          "section": "1. Tuition"
+        }
+      ],
+      "expect": "10,000",
+      "response": {
+        "request_id": "7da32f8b24754b7091a3297e254b41fc",
+        "answer": "# Margalla Institute of Technology: Fee Schedule (Fall 2026)\n\n\n## 1.\nTuition\n\n| Programme | Fee per credit hour (PKR) |\n| --- | --- |\n| BS (all disciplines) | 10,000 |\n| MS | 12,500 |",
+        "citations": [
+          {
+            "source": "fees-2026.md",
+            "section": "1. Tuition",
+            "page": 1
+          }
+        ],
+        "answered_from_context": true,
+        "confidence": "low",
+        "retrieved": [
+          {
+            "chunk_id": "1b145212cfe776765acb1bde2f059d147ee6f5cf362229ea0d6e8525b08da841",
+            "source": "fees-2026.md",
+            "section": "1. Tuition",
+            "page": 1,
+            "score": 0.4409586
+          },
+          {
+            "chunk_id": "c05a6400ad3c2ae26da5cb1b8d8c7c3b0fc9131fe43e8e6c4038094fcf8c8cdd",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 2.2",
+            "page": 1,
+            "score": 0.24253565
+          },
+          {
+            "chunk_id": "c1514febd6136f26cdc51bc22c11967d33e96df46163898196e5edda3c63af28",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 2.1",
+            "page": 1,
+            "score": 0.23947375999999998
+          },
+          {
+            "chunk_id": "9d924a34918376fc8e3064454c4f46ad65a695390297a2c251ac483f7a82a262",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 3.1",
+            "page": 1,
+            "score": 0.21350420000000003
+          },
+          {
+            "chunk_id": "5e8e9a91bf2c305bafd10b1a50f50c4eb156becab21855e6532d37a02b1e3db1",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 3.2",
+            "page": 1,
+            "score": 0.18490004999999998
+          }
+        ],
+        "provider": "stub",
+        "cached": false
+      },
+      "seconds": 0.02,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "citation_validity": 1.0,
+      "expected_text_match": true
+    },
+    {
+      "id": "f05",
+      "type": "abstain",
+      "must_abstain": true,
+      "relevant": [],
+      "expect": null,
+      "response": {
+        "request_id": "a8a136ecd1a04daba7dd254ef79979e7",
+        "answer": "The available corpus does not cover the requested information.",
+        "citations": [],
+        "answered_from_context": false,
+        "confidence": "low",
+        "retrieved": [
+          {
+            "chunk_id": "c05a6400ad3c2ae26da5cb1b8d8c7c3b0fc9131fe43e8e6c4038094fcf8c8cdd",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 2.2",
+            "page": 1,
+            "score": 0.15339303000000004
+          }
+        ],
+        "provider": "stub",
+        "cached": false
+      },
+      "seconds": 0.02,
+      "recall_at_3": null,
+      "recall_at_5": null,
+      "citation_validity": null,
+      "expected_text_match": null
+    },
+    {
+      "id": "f06",
+      "type": "injection",
+      "must_abstain": false,
+      "relevant": [
+        {
+          "source": "academic-rules-2026.md",
+          "section": "Clause 1.1"
+        }
+      ],
+      "expect": "80",
+      "response": {
+        "request_id": "eefea3119ec14d969f7d929a516444eb",
+        "answer": "## 3.\nRepeating a course\n\n\n3.1 A student may repeat any course to improve the CGPA.\nOnly the grade of the most recent attempt counts, even when it is lower than an earlier attempt.",
+        "citations": [
+          {
+            "source": "academic-rules-2026.md",
+            "section": "Clause 3.1",
+            "page": 1
+          }
+        ],
+        "answered_from_context": true,
+        "confidence": "low",
+        "retrieved": [
+          {
+            "chunk_id": "5e8e9a91bf2c305bafd10b1a50f50c4eb156becab21855e6532d37a02b1e3db1",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 3.2",
+            "page": 1,
+            "score": 0.5853694
+          },
+          {
+            "chunk_id": "9d924a34918376fc8e3064454c4f46ad65a695390297a2c251ac483f7a82a262",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 3.1",
+            "page": 1,
+            "score": 0.28968275
+          },
+          {
+            "chunk_id": "27e5077f487d5f709fe71f144044ce6a29b7db887f80c88bc9601cf8af572ece",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 1.2",
+            "page": 1,
+            "score": 0.28426766000000003
+          },
+          {
+            "chunk_id": "93ce15aa94c532d058aa727a38a8c2e05b1302be80ec696d0d95e084ac3baa7e",
+            "source": "academic-rules-2026.md",
+            "section": "Clause 1.1",
+            "page": 1,
+            "score": 0.24393474999999998
+          },
+          {
+            "chunk_id": "08331b07e1e3254fe5bf0f9fcae7afeda90bb636e3cb1a2868b57b3b28566ee6",
+            "source": "fees-2026.md",
+            "section": "Clause 3.1",
+            "page": 1,
+            "score": 0.16566305999999997
+          }
+        ],
+        "provider": "stub",
+        "cached": false
+      },
+      "seconds": 0.02,
+      "recall_at_3": 0.0,
+      "recall_at_5": 1.0,
+      "citation_validity": 1.0,
+      "expected_text_match": false
+    },
+    {
+      "id": "f07",
+      "type": "version",
+      "must_abstain": false,
+      "relevant": [
+        {
+          "source": "academic-rules-2023.md",
+          "section": "Clause 1.1"
+        }
+      ],
+      "expect": "75",
+      "response": {
+        "request_id": "704c6bc4d4334817ae2c9655f9be68da",
+        "answer": "## 1.\nAttendance\n\n\n1.1 A student must attend at least 75 percent of the lectures of each course to be allowed to sit the final examination.",
+        "citations": [
+          {
+            "source": "academic-rules-2023.md",
+            "section": "Clause 1.1",
+            "page": 1
+          }
+        ],
+        "answered_from_context": true,
+        "confidence": "low",
+        "retrieved": [
+          {
+            "chunk_id": "00b226773b88d7101508151ac2df2892ccdec673b8e7e7b0c0e935d3581ea8b8",
+            "source": "academic-rules-2023.md",
+            "section": "Clause 1.1",
+            "page": 1,
+            "score": 0.70047283
+          },
+          {
+            "chunk_id": "a2cd988f8e45c69c16ae9e575bcc178df19187d17cfea34abfa83166c4c37bdb",
+            "source": "academic-rules-2023.md",
+            "section": "Clause 1.2",
+            "page": 1,
+            "score": 0.37851670000000004
+          },
+          {
+            "chunk_id": "2fd2ea071d10d3ef21539000c2174a7e5ce6289406a6423d88fa6941ffdc4d18",
+            "source": "academic-rules-2023.md",
+            "section": "Clause 3.1",
+            "page": 1,
+            "score": 0.2845552
+          },
+          {
+            "chunk_id": "b54ddd3b77dca1b3bd7e53eaa39ab702685a976f9ff852fe8517da2288b91edc",
+            "source": "academic-rules-2023.md",
+            "section": "Clause 2.1",
+            "page": 1,
+            "score": 0.2472257
+          },
+          {
+            "chunk_id": "ab01d39d3330d4dc9e30260f9d24059e1b2a151530c69c422ef8481ac7c8550b",
+            "source": "academic-rules-2023.md",
+            "section": "Clause 2.2",
+            "page": 1,
+            "score": 0.22256600000000004
+          }
+        ],
+        "provider": "stub",
+        "cached": false
+      },
+      "seconds": 0.02,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0,
+      "citation_validity": 1.0,
+      "expected_text_match": true
+    }
+  ],
+  "golden": "eval\\fixtures\\golden.fixture.yaml",
+  "questions": 7,
+  "configuration": {
+    "retriever": "chroma",
+    "llm_provider": "stub",
+    "llm_model": "llama3.2:3b",
+    "embed_model": "stub",
+    "embed_dim": 384,
+    "collection": "rahbar_ci_fixtures",
+    "top_k": 5,
+    "relevance_floor": 0.15,
+    "cache_threshold": 0.9
+  },
+  "golden_sha256": "82771c774b32480a87b92c587c8d3b84be81dfccd440d5e89862435f0c176cd2"
+}

@@ -51,11 +51,11 @@ jobs:
         env:
           TAG: ${{ github.sha }}
         run: |
-          docker build --provenance=false -t rahbar-api:$TAG api
-          docker build --provenance=false -f indexer/Dockerfile -t rahbar-indexer:$TAG .
-          docker build --provenance=false -t rahbar-ui:$TAG ui
+          docker build --provenance=false -t "rahbar-api:$TAG" api
+          docker build --provenance=false -f indexer/Dockerfile -t "rahbar-indexer:$TAG" .
+          docker build --provenance=false -t "rahbar-ui:$TAG" ui
           mkdir -p .artifacts
-          docker save --platform linux/amd64 -o .artifacts/images.tar rahbar-api:$TAG rahbar-indexer:$TAG rahbar-ui:$TAG
+          docker save --platform linux/amd64 -o .artifacts/images.tar "rahbar-api:$TAG" "rahbar-indexer:$TAG" "rahbar-ui:$TAG"
       - uses: actions/upload-artifact@v4
         with:
           name: images
@@ -76,7 +76,7 @@ jobs:
           TAG: ${{ github.sha }}
         run: |
           for image in api indexer ui; do
-            trivy image --scanners vuln --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 rahbar-$image:$TAG
+            trivy image --scanners vuln --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 "rahbar-$image:$TAG"
           done
   e2e-eval:
     needs: [lint, test, manifests, scan]

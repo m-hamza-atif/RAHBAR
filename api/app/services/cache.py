@@ -116,7 +116,8 @@ class SemanticCache:
         pattern = self.namespace(revision) + '*' if revision else 'rahbar:cache:*'
         keys = list(self.client.scan_iter(match=pattern, count=100))
         if keys:
-            return self.client.delete(*keys)
+            deleted = self.client.delete(*keys)
+            return deleted if isinstance(deleted, int) else 0
         return 0
 
     def clear_cache(self) -> int:

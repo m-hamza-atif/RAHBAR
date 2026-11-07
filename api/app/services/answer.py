@@ -120,7 +120,9 @@ def answer_question(question: str, retriever: Retriever, provider: LLMProvider,
             citations=answer.citations, answered_from_context=answer.answered_from_context,
             confidence=answer.confidence, retrieved=[RetrievedRef(**p.model_dump()) for p in passages],
             provider=provider.name, cached=False)
-        if not followup and validated and answer.answered_from_context:
+        # Never-cache rule: follow-ups, correction retries, and ungrounded answers are never cached
+        never_cache = followup or not validated or not answer.answered_from_context
+        if not never_cache:
             cache.put(question, vector, revision, response)
         return response
     except HTTPException:

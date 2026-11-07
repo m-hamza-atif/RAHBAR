@@ -17,7 +17,7 @@ def healthz() -> dict[str, str]:
 def readyz(request: Request, response: Response) -> dict[str, object]:
     from ..services.readiness import check
     checks, revision = check(request.app.state.retriever, request.app.state.cache)
-    if not revision:
+    if not revision or len(revision) == 0:
         response.status_code = 503
     settings = request.app.state.settings
     configuration = {key: getattr(settings, key) for key in (

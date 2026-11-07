@@ -18,6 +18,15 @@ def follow_up(question: str, history: list) -> bool:
         question, re.I))
 
 
+def never_cache(question: str, history: list, response: AskResponse | None = None) -> bool:
+    """Never-cache rule: follow-ups and unverified abstentions are never cached."""
+    if follow_up(question, history):
+        return True
+    if response is not None and (not response.answered_from_context or not response.citations):
+        return True
+    return False
+
+
 def cosine(a: list[float], b: list[float]) -> float:
     if len(a) != len(b) or not a:
         return -1
@@ -97,3 +106,18 @@ class SemanticCache:
             self.memory[key] = entry
         else:
             self.client.set(key, json.dumps(entry), ex=self.settings.cache_ttl)
+
+    def invalidate(self, revision: str | None = None) -> int:
+        """Invalidate cache keys for a specific revision or flush all namespaces."""
+        if self.client is None:
+            count = len(self.memory)
+            self.memory.clear()
+            return count
+        pattern = self.namespace(revision) + '*' if revision else 'rahbar:cache:*'
+        keys = list(self.client.scan_iter(match=pattern, count=100))
+        if keys:
+            return self.client.delete(*keys)
+        return 0
+
+    def clear_cache(self) -> int:
+        return self.invalidate()

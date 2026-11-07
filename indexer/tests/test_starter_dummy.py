@@ -40,7 +40,7 @@ class FakeClient:
 def test_dummy_index_writes_three_chunks_and_records_the_model() -> None:
     client = FakeClient()
     assert write_dummy_index(get_settings(), client) == 3
-    col = client.collections["rahbar"]
+    col = client.collections[get_settings().collection]
     assert col.metadata["embed_model"] == DUMMY_MODEL
     assert col.metadata["dimension"] == DUMMY_DIM
     for _doc, vector, meta in col.rows.values():

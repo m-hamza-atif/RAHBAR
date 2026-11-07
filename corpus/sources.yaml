@@ -1,0 +1,65 @@
+documents:
+- name: Undergraduate Academic Rules (Aug 2023)
+  url: https://nu.edu.pk/public/downloads/Academic-Rules-Undergrad-Aug-2023.pdf
+  doc_version: 2023-08
+  superseded: true
+  properties:
+  - 1
+  - 2
+  - 5
+  - 7
+- name: Academic Rules Handbook (Jun 2026)
+  url: https://nu.edu.pk/public/downloads/Academic_Rules_Handbook_2026.pdf
+  doc_version: 2026-06
+  superseded: false
+  properties:
+  - 1
+  - 2
+  - 5
+  - 7
+- name: Prospectus 2026 - Academic Rules and Regulations
+  url: https://nu.edu.pk/Admissions/ProspectusUpload/Academic Rules and Regulations.pdf
+  doc_version: '2026'
+  superseded: false
+  properties:
+  - 1
+  - 5
+  - 7
+- name: Annual Report 2019-20
+  url: https://nu.edu.pk/public/downloads/AnnualReportForm/Annual Report 2019-20.pdf
+  doc_version: 2019-20
+  superseded: false
+  properties:
+  - 1
+  - 4
+  - 7
+- name: Annual Report 2023-24
+  url: https://nu.edu.pk/public/downloads/AnnualReportForm/Annual Report 2023-24.pdf
+  doc_version: 2023-24
+  superseded: false
+  properties:
+  - 1
+  - 4
+  - 7
+- name: Fee Structure page
+  url: https://www.nu.edu.pk/Admissions/FeeStructure
+  doc_version: 2026-27
+  superseded: false
+  properties:
+  - 4
+  - 7
+- name: Grading page
+  url: https://www.nu.edu.pk/Student/Grading
+  doc_version: '2026'
+  superseded: false
+  properties:
+  - 4
+  - 7
+- name: Faculty Entrepreneurship and Technical Start-ups Policy
+  url: https://nu.edu.pk/OricResources/ResearchPolicies/27.pdf?20220530
+  doc_version: 2022-05
+  superseded: false
+  properties:
+  - 1
+  - 3
+  - 5

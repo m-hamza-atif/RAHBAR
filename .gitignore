@@ -15,6 +15,7 @@ corpus/raw/
 __pycache__/
 *.pyc
 .venv/
+.venv-wsl/
 venv/
 .pytest_cache/
 .mypy_cache/
@@ -23,3 +24,9 @@ venv/
 # Local scratch
 *.log
 .DS_Store
+
+# Local AI Agent Tracking (Non-deliverables)
+CODEX_REQUESTS.md
+CODEX_PHASE_REPORT.md
+VIVA_GUIDE_PARTNER_A.md
+corpus/**/*.pdf

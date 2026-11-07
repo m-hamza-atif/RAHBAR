@@ -12,6 +12,11 @@ a corpus and score recall in a minute instead of six. The institute is fictional
 The hostel topic is missing on purpose: `golden.fixture.yaml` asks about it and
 expects the service to decline.
 
+Use `CORPUS_DIR=eval/fixtures` from the repository root (or an absolute path in
+containers). These fictional facts must never be presented as FAST-NUCES policy.
+Keep the planted instruction in section 3.2: it is untrusted test evidence for
+the injection defence, not an instruction to the indexer or assistant.
+
 Each file starts with front matter (`doc_version`, `superseded`). The indexer's
 `discover()` reads it when there is no `_index.json`, so your extract stage
 needs to handle `.md` files as well as PDFs.

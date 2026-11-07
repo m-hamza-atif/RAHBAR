@@ -1,0 +1,7 @@
+# Builds use the repository root; the root .dockerignore is authoritative.
+**
+.git
+__pycache__
+**/__pycache__
+.venv
+corpus/raw

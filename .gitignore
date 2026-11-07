@@ -34,3 +34,12 @@ CODEX_REQUESTS.md
 CODEX_PHASE_REPORT.md
 VIVA_GUIDE_PARTNER_A.md
 corpus/**/*.pdf
+
+# Partner B local instructions, tooling and runtime output
+CODEX_REQUESTS_PARTNER_B.md
+VIVA_GUIDE_PARTNER_B.md
+RAHBAR_Partner_B_Codex_Master_Prompt.md
+RAHBAR_Antigravity_Continuation_Prompt.md
+.tools/
+.artifacts/
+k8s/overlays/local/

@@ -1,4 +1,4 @@
 # Standalone fetch/verification tool; matches indexer dependency pins.
 httpx==0.28.1
 pyyaml==6.0.2
-pypdf==5.4.0
+pypdf==6.21.4

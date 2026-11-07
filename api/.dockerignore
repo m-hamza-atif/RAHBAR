@@ -1,0 +1,11 @@
+**
+!Dockerfile
+!requirements.txt
+!app/
+!app/**
+__pycache__
+**/__pycache__
+**/*.pyc
+.git
+.venv
+corpus/raw

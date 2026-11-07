@@ -1,0 +1,9 @@
+**
+!Dockerfile
+!index.html
+!nginx.conf
+.git
+__pycache__
+**/__pycache__
+.venv
+corpus/raw

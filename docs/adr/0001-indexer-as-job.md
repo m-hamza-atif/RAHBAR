@@ -25,3 +25,20 @@ Alternatives: startup indexing was rejected for the races and restart cost;
 a blue/green collection swap would preserve old-index availability but needs an
 atomic active-index pointer and more storage. The simpler readiness window is
 appropriate here. See docs/PIPELINE.md and indexer/pipeline/store.py.
+
+## Partner B implementation
+
+The Job and CronJob are now implemented. Four reasons drive the separation:
+(1) three startup writers race one collection; (2) pod crashes/scaling repeat OCR
+and embedding costs; (3) query readiness waits for startup ingestion that itself
+depends on unavailable data services; (4) operators need to reindex independently
+of API deployments. `k8s/base/indexer.yaml:7` sets the bounded retry budget,
+`k8s/base/reindex.yaml:9` forbids scheduled overlap, and `k8s/base/api.yaml:7`
+requests three reader replicas. Rendered Job/CronJob specs are checked for equality.
+
+`scripts/deploy.py:50` suspends the schedule and detects unfinished Jobs before
+manual indexing. `indexer/entrypoint.py:15` obtains a renewable Redis writer lease
+outside the invalidated cache prefix. Lease renewal failure terminates the child
+writer. Do not restart Redis, clear its lease or suspend the writer host during
+indexing: this is an operational lock, not consensus under arbitrary partitions.
+Bootstrap waits for both data services before creating the one-shot Job.

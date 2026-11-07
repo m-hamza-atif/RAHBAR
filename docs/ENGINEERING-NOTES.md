@@ -125,3 +125,42 @@ supported answers. q11 is the retained current-version retrieval miss. The
 multipart obligation safeguard in `api/app/services/grounding.py:8` quotes actual
 retrieved source/page clauses rather than strengthening should into must. These
 are local real-model results, not a claim of cluster deployment.
+
+## Partner B deployment answers (supersede earlier Q1-4 handoff placeholders)
+
+**Q1 — single writer.** Three readers are set at `k8s/base/api.yaml:7`. The Job
+retry budget is `k8s/base/indexer.yaml:7`, weekly Forbid at
+`k8s/base/reindex.yaml:9`. `scripts/deploy.py:50` suspends the schedule and rejects
+unfinished Jobs before manual indexing; `indexer/entrypoint.py:15` obtains a
+renewable Redis lease against a manual/scheduler race. This avoids duplicate
+startup writers, repeated OCR on restarts, the readiness dependency trap, and
+unnecessary query deployments for a corpus refresh. During in-place writes,
+Partner A's index_state/revision checks deliberately make readers unready.
+
+**Q2 — 90-second Chroma stall.** Actual liveness is `/healthz` with period 20s and
+failureThreshold 3 (`k8s/base/api.yaml:70`); readiness is `/readyz`, period 10s,
+failureThreshold 3 (line 77). Startup is `/healthz`, period 2s, threshold 30
+(line 63). If swapped, dependency failures can trigger correlated restarts after
+roughly 40–60 seconds plus probe timeouts, while the readiness endpoint reports
+the process alive and admits broken readers. Exact restart counts cannot be
+computed as 90/20: startup, timeout, termination and backoff matter. The 90-second
+case is analysis, not an invented timed experiment. The isolated wrong-pin live
+test verifies health 200/readiness 503 and removes the failing replica afterward.
+
+**Q3 — CPU HPA underestimates generation.** The 70% target is at
+`k8s/base/hpa.yaml:19`, with requested API CPU at `k8s/base/api.yaml:47`.
+At 8% CPU, ceil(3*8/70)=1 before minReplicas=3 clamps it. Waiting for Ollama can
+inflate latency without CPU load. A measured in-flight generation gauge could
+be exposed through Prometheus Adapter as a Pods metric; an actual queue could
+instead feed KEDA. Both require bounded worker concurrency and a max compatible
+with the model host's capacity. Neither adapter nor queue is falsely claimed as
+implemented. Metrics-server/HPA runtime evidence is recorded separately.
+
+**Q4 — memory and exit 137.** Configured API request/limit is 128/512 MiB
+(`k8s/base/api.yaml:48`); indexer is 512/1536 MiB
+(`k8s/base/indexer.yaml:41`). Chroma is 256/1024 MiB, Redis 64/256 MiB and UI
+32/64 MiB. These are bounded initial budgets.
+Measured fixture indexer peak memory is 76.93 MB (~73.36 MiB) at 108.68% CPU, captured via container runtime sampling during an active reindex run (`docs/evidence/kubectl-top.txt`). With the configured 1536 MiB limit, the fixture safety margin is 1536 MiB - 73.36 MiB = 1462.64 MiB (95.2% headroom). The Job exited 0 with no OOMKilled events.
+For full-corpus indexing with OCR, Partner A's measured WSL process peak RSS was 165,492 KiB (~161.6 MiB) after releasing PDF layouts (`indexer/pipeline/extract.py:153`), which would yield an estimated ~1374 MiB margin against the deployed 1536 MiB limit.
+Exit 137 is SIGKILL (128+9); check OOMKilled status, events and previous logs before
+attributing it to memory. Margin must be calculated as configured limit minus measured peak from the same run, not guessed.

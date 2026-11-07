@@ -1,22 +1,35 @@
-"""Hosted free-tier provider (Groq, Google AI Studio, OpenRouter). Yours to build.
-
-The key arrives as LLM_API_KEY from a Kubernetes Secret created on the command
-line. It never appears in a file you commit, and never in a log line.
-"""
-
-from __future__ import annotations
-
+"""OpenAI-compatible JSON provider; credentials are environment-only."""
+import httpx
 from ...config import Settings
-from ...schemas import Answer, Passage
+from ...schemas import Passage
+from ...services.prompt import messages
+from .base import Generation, count_tokens
 
 
 class HostedProvider:
-    name = "hosted"
+    name = 'hosted'
 
     def __init__(self, settings: Settings) -> None:
-        self.settings = settings   # hosted_base_url, llm_model, llm_api_key, temperature
+        self.settings = settings
 
-    def generate(self, question: str, passages: list[Passage]) -> Answer:
-        # STARTER-TODO(3.4): same contract as the Ollama provider, over the hosted API.
-        # Many free tiers are OpenAI-compatible: POST {hosted_base_url}/chat/completions.
-        raise NotImplementedError("HostedProvider.generate: see STARTER-TODO(3.4)")
+    def generate(self, question: str, passages: list[Passage],
+                 validation_error: str = '') -> Generation:
+        if not self.settings.llm_api_key or not self.settings.hosted_base_url:
+            raise RuntimeError('hosted mode requires LLM_API_KEY and HOSTED_BASE_URL')
+        prompt = messages(question, passages)
+        if validation_error:
+            prompt.append({'role': 'system', 'content': 'Previous output failed validation: '
+                           + validation_error + '. Return valid JSON and only evidence citations.'})
+        # Groq, OpenRouter and Gemini OpenAI-compatible URLs are selected by configuration.
+        with httpx.Client(timeout=120) as client:
+            response = client.post(self.settings.hosted_base_url.rstrip('/')+'/chat/completions',
+                headers={'Authorization': 'Bearer '+self.settings.llm_api_key}, json={
+                    'model': self.settings.llm_model, 'messages': prompt,
+                    'temperature': self.settings.temperature,
+                    'response_format': {'type': 'json_object'}})
+            response.raise_for_status()
+            data = response.json()
+            text = data['choices'][0]['message']['content']
+            usage = data.get('usage') or {}
+            return Generation(text, int(usage.get('prompt_tokens', count_tokens(str(prompt)))),
+                              int(usage.get('completion_tokens', count_tokens(text))))

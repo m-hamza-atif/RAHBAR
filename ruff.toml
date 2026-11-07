@@ -1,0 +1,4 @@
+target-version = "py312"
+line-length = 100
+# Downloaded corpus and local audit scripts are not source deliverables.
+extend-exclude = ["corpus/raw", ".venv-wsl"]

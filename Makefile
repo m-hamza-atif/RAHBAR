@@ -26,6 +26,7 @@ install: ## create .venv and install the api, indexer and tool dependencies
 test: ## run the api and indexer tests (stubs only: no cluster, no model, no network)
 	cd api && $(BIN)/pytest -q
 	cd indexer && $(BIN)/pytest -q
+	$(BIN)/pytest -q corpus/tests eval/tests
 
 lint: ## ruff and mypy over everything in Python
 	$(BIN)/ruff check api indexer eval corpus
@@ -71,8 +72,8 @@ fetch: ## download the documents listed in corpus/sources.yaml
 eval: ## score eval/golden.yaml through the Ingress and apply the CI gate
 	$(BIN)/python eval/run_eval.py --api "http://$(INGRESS_IP)" --host $(HOST)
 
-eval-fixtures: ## score the CI fixture golden set against a local `make dev`
-	$(BIN)/python eval/run_eval.py --api http://localhost:8000 --golden eval/fixtures/golden.fixture.yaml --out /tmp/rahbar-fixture-results.json
+eval-fixtures: ## score a fixture-indexed API on localhost:8000 (stub embeddings/provider, floor 0.15)
+	$(BIN)/python eval/run_eval.py --api http://localhost:8000 --golden eval/fixtures/golden.fixture.yaml --baseline eval/fixtures/baseline.fixture.json --out /tmp/rahbar-fixture-results.json
 
 check: ## run the submission checker
 	$(PY) scripts/check_submission.py

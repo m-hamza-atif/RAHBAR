@@ -46,7 +46,7 @@ Use a separate collection for fixtures and the full corpus. Stub embeddings are
 for deterministic tests, not a measurement of production semantic quality.
 Use `EMBED_MODEL=stub` explicitly for these runs. If LLM_PROVIDER=stub is used
 with another configured model name, metadata still records the configured name
-and additionally records embedding_backend=stub; the future API must check the
+and additionally records embedding_backend=stub; the Phase 3 API checks the
 backend as well as model/dimension to avoid mistaking hash vectors for Ollama.
 Full-client persistent mode is optional; the tested deployment path uses the
 pinned chromadb-client and Docker Chroma 1.0.12 over HTTP.
@@ -173,10 +173,9 @@ are omitted from metadata updates; Chroma retains the configured distance space.
 A model/dimension change recreates the collection after marking it unready.
 This is a single-writer, in-place rebuild with a readiness maintenance window,
 not an atomic snapshot swap. Interrupted writes can leave a partial collection
-marked building; rerunning repairs it. Phase 3 must check index_state and the
-model/dimension/backend pins, and bind cached answers to the index revision to
-reject requests that race a rebuild. Do not overlap indexing jobs. The current
-starter API has not yet implemented these Phase 3 protections.
+marked building; rerunning repairs it. The Phase 3 API checks index_state and the
+model/dimension/backend pins, and binds cached answers to the index revision to
+reject requests that race a rebuild. See docs/API.md. Do not overlap indexing jobs. These Phase 3 protections are now implemented in the API.
 
 Every chunk stores:
 
@@ -223,3 +222,75 @@ survives metadata updates. Fixtures live in rahbar_phase2_fixtures. These are
 smoke-test collections, not a production nomic index. Detailed logs remain in
 ignored corpus/raw/phase2-full-index.jsonl; essential results are recorded here.
 No evaluation baseline or generation metric is produced in this phase.
+
+
+## Phase 4 measured production configuration
+
+The Phase 2 smoke numbers above are historical stub results. Final extraction
+clips PDF characters to visible page bounds, uses Tesseract PSM 6 for aligned
+clause text, normalizes clause section labels, and merges heading-only fragments
+into the following facts. These fixes were driven by actual off-page characters
+at x=-376 and the CI repeating-course question retrieving headings without facts.
+No policy values or OCR-ambiguous clause numbers were guessed.
+
+| Size | Overlap | Strategy | Chunks | Amplification | Recall@3 | Recall@5 |
+| ---: | ---: | --- | ---: | ---: | ---: | ---: |
+| 256 | 32 | structure | 945 | 1.0411 | 0.9375 | 0.9375 |
+| 512 | 64 | structure | 875 | 1.0129 | 0.9375 | 0.9375 |
+| 1024 | 128 | structure | 862 | 1.0000 | 0.9375 | 0.9375 |
+| 100 | 0 | fixed | 748 | 1.0000 | 0.2500 | 0.2500 |
+
+The golden set was frozen before these experiments. These figures use real nomic
+embeddings and actual Chroma retrieval; generation is not part of the chunking
+comparison. Select 512/64: recall tied across structure settings, it preserves
+context with shorter worst-case evidence than 1024 and less overhead than 256.
+Units remain whitespace tokens, not model subword tokens. With 16 answerable
+questions, one miss changes recall by 6.25 percentage points; this is a small
+in-sample calibration set, not a held-out quality guarantee.
+
+| Cache threshold | True hits (3 positive pairs) | False hits (5 negative pairs) |
+| ---: | ---: | ---: |
+| 0.80 | 3 | 1 |
+| 0.90 | 2 | 0 |
+| 0.95 | 1 | 0 |
+
+Ship 0.90, the lowest tested threshold with zero false hits. Graduation versus
+warning CGPA similarity 0.8059 rules out 0.80. The graduation paraphrase at
+0.8866 misses the shipped threshold; this is the accepted safety/hit-rate tradeoff.
+The CI hash-embedding fixtures separately use RELEVANCE_FLOOR=0.15, calibrated
+at 0.15/0.25/0.35 in eval/fixture-calibration.json. Production remains 0.35.
+Do not mix fixture and full-corpus baselines or interpret hash quality as nomic quality.
+
+Evaluation matches exact source plus normalized clause label (Clause 1.21 and
+1.21 plus descriptive text denote the same clause). Non-clause headings match
+normalized case/whitespace; distinct titles such as 9. Privacy and 9. Retakes are
+not conflated. Citation validity uses exact source/section/page triples, not that
+clause normalization. Must-abstain questions have undefined retrieval recall and
+are excluded from its mean. Generation validity weights individual citations.
+The gate rejects recall@5 drops greater than 0.05, citation validity below 0.95,
+or abstention correctness below 1.0. Missing metrics/baselines fail closed unless
+a first baseline is explicitly requested; failed gates cannot overwrite baselines.
+
+Full results/baseline are in eval/results.json and eval/baseline.json. Fast CI
+uses eval/fixtures/golden.fixture.yaml and baseline.fixture.json instead. The
+runner defaults to cache bypass so metrics reflect actual retrieval/generation.
+See docs/EVALUATION.md for reproduction and limitations.
+
+
+### Measured local memory improvement
+
+A full-corpus WSL stub index run peaked at 1,083,120 KiB RSS before releasing
+pdfplumber layout/character caches page by page. Explicitly closing both visible
+and original pages reduced the measured peak to 165,492 KiB (about 161.6 MiB).
+Both runs completed successfully with real OCR. These are GNU time local-process
+measurements, not Kubernetes pod peaks or real-model server memory. Ollama runs
+separately. Partner B must still capture kubectl top pods and validate container
+limits with the actual cluster image. See eval/experiments.json resource_sample.
+
+
+Final evaluation: recall@3/5=0.9375, citation validity=1.0 (28/28),
+abstention correctness=1.0 (2/2). Fifteen of sixteen answerable questions were
+supported; the current-version Clause 4.3 retrieval miss remains visible. Final
+local collections are rahbar_policies (875 real-model chunks) and
+rahbar_ci_fixtures (16 hash-fixture chunks); obsolete smoke/tuning collections
+and the temporary embedding-vector cache were removed.

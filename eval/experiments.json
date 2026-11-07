@@ -1,0 +1,504 @@
+{
+  "configuration": {
+    "embedding_model": "nomic-embed-text",
+    "embedding_dim": 768,
+    "model_digest": "0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f",
+    "relevance_floor": 0.35,
+    "golden_sha256": "6812ac705f273c6fdc305a1be94efaafbe4ed26b4db2a26e981dda8eadb73cc6",
+    "documents_sha256": "fabf137d53ed3387587d2012a7fa602d67524bfe0f846cd46e2363e56ec9a8d6"
+  },
+  "chunking": [
+    {
+      "size": 256,
+      "overlap": 32,
+      "strategy": "structure",
+      "chunks": 945,
+      "storage_amplification": 1.041062428496336,
+      "recall_at_3": 0.9375,
+      "recall_at_5": 0.9375,
+      "by_type": {
+        "ordinary": {
+          "count": 9,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0
+        },
+        "version_sensitive": {
+          "count": 2,
+          "recall_at_3": 0.5,
+          "recall_at_5": 0.5
+        },
+        "exact_term": {
+          "count": 4,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0
+        },
+        "must_abstain": {
+          "count": 2,
+          "recall_at_3": null,
+          "recall_at_5": null
+        },
+        "prompt_injection": {
+          "count": 1,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0
+        }
+      },
+      "retrieval_only": true
+    },
+    {
+      "size": 512,
+      "overlap": 64,
+      "strategy": "structure",
+      "chunks": 875,
+      "storage_amplification": 1.0128629294084908,
+      "recall_at_3": 0.9375,
+      "recall_at_5": 0.9375,
+      "by_type": {
+        "ordinary": {
+          "count": 9,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0
+        },
+        "version_sensitive": {
+          "count": 2,
+          "recall_at_3": 0.5,
+          "recall_at_5": 0.5
+        },
+        "exact_term": {
+          "count": 4,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0
+        },
+        "must_abstain": {
+          "count": 2,
+          "recall_at_3": null,
+          "recall_at_5": null
+        },
+        "prompt_injection": {
+          "count": 1,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0
+        }
+      },
+      "retrieval_only": true
+    },
+    {
+      "size": 1024,
+      "overlap": 128,
+      "strategy": "structure",
+      "chunks": 862,
+      "storage_amplification": 1.0,
+      "recall_at_3": 0.9375,
+      "recall_at_5": 0.9375,
+      "by_type": {
+        "ordinary": {
+          "count": 9,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0
+        },
+        "version_sensitive": {
+          "count": 2,
+          "recall_at_3": 0.5,
+          "recall_at_5": 0.5
+        },
+        "exact_term": {
+          "count": 4,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0
+        },
+        "must_abstain": {
+          "count": 2,
+          "recall_at_3": null,
+          "recall_at_5": null
+        },
+        "prompt_injection": {
+          "count": 1,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0
+        }
+      },
+      "retrieval_only": true
+    },
+    {
+      "size": 100,
+      "overlap": 0,
+      "strategy": "fixed",
+      "chunks": 748,
+      "storage_amplification": 1.0,
+      "recall_at_3": 0.25,
+      "recall_at_5": 0.25,
+      "by_type": {
+        "ordinary": {
+          "count": 9,
+          "recall_at_3": 0.2222222222222222,
+          "recall_at_5": 0.2222222222222222
+        },
+        "version_sensitive": {
+          "count": 2,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0
+        },
+        "exact_term": {
+          "count": 4,
+          "recall_at_3": 0.5,
+          "recall_at_5": 0.5
+        },
+        "must_abstain": {
+          "count": 2,
+          "recall_at_3": null,
+          "recall_at_5": null
+        },
+        "prompt_injection": {
+          "count": 1,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0
+        }
+      },
+      "retrieval_only": true
+    }
+  ],
+  "selected_chunking": {
+    "size": 512,
+    "overlap": 64,
+    "strategy": "structure",
+    "chunks": 875,
+    "storage_amplification": 1.0128629294084908,
+    "recall_at_3": 0.9375,
+    "recall_at_5": 0.9375,
+    "by_type": {
+      "ordinary": {
+        "count": 9,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0
+      },
+      "version_sensitive": {
+        "count": 2,
+        "recall_at_3": 0.5,
+        "recall_at_5": 0.5
+      },
+      "exact_term": {
+        "count": 4,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0
+      },
+      "must_abstain": {
+        "count": 2,
+        "recall_at_3": null,
+        "recall_at_5": null
+      },
+      "prompt_injection": {
+        "count": 1,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0
+      }
+    },
+    "retrieval_only": true
+  },
+  "cache_pairs": [
+    {
+      "a": "What minimum CGPA is required for graduation?",
+      "b": "What CGPA do I need to graduate?",
+      "same_intent": true,
+      "similarity": 0.8865891822745174,
+      "same_cache_scope": true
+    },
+    {
+      "a": "What is the BS tuition fee per credit hour?",
+      "b": "How much tuition does each BS credit hour cost?",
+      "same_intent": true,
+      "similarity": 0.9446736521900427,
+      "same_cache_scope": true
+    },
+    {
+      "a": "What minimum attendance is required?",
+      "b": "What is the required minimum attendance?",
+      "same_intent": true,
+      "similarity": 0.9907078827345072,
+      "same_cache_scope": true
+    },
+    {
+      "a": "What minimum CGPA is required for graduation?",
+      "b": "What minimum CGPA avoids academic warning?",
+      "same_intent": false,
+      "similarity": 0.8058809171577113,
+      "same_cache_scope": true
+    },
+    {
+      "a": "What is the tuition fee?",
+      "b": "What is the admission fee?",
+      "same_intent": false,
+      "similarity": 0.7521395701110256,
+      "same_cache_scope": true
+    },
+    {
+      "a": "What is the minimum attendance?",
+      "b": "What is the minimum graduation CGPA?",
+      "same_intent": false,
+      "similarity": 0.6248105120896125,
+      "same_cache_scope": true
+    },
+    {
+      "a": "Can I miss lectures?",
+      "b": "Can I miss the final examination?",
+      "same_intent": false,
+      "similarity": 0.694254200893106,
+      "same_cache_scope": true
+    },
+    {
+      "a": "What is the BS tuition fee?",
+      "b": "What is the PhD tuition fee?",
+      "same_intent": false,
+      "similarity": 0.7074305586480557,
+      "same_cache_scope": true
+    }
+  ],
+  "cache_thresholds": [
+    {
+      "threshold": 0.8,
+      "false_hits": 1,
+      "true_hits": 3
+    },
+    {
+      "threshold": 0.9,
+      "false_hits": 0,
+      "true_hits": 2
+    },
+    {
+      "threshold": 0.95,
+      "false_hits": 0,
+      "true_hits": 1
+    }
+  ],
+  "selected_cache_threshold": 0.9,
+  "failure_modes": {
+    "A": {
+      "source": "faculty-entrepreneurship-and-technical-start-ups-policy.pdf",
+      "ocr_enabled_chunks": 71,
+      "ocr_disabled_chunks": 0,
+      "ocr_disabled_chars": 0
+    },
+    "B": {
+      "fixed": {
+        "size": 100,
+        "overlap": 0,
+        "strategy": "fixed",
+        "chunks": 748,
+        "storage_amplification": 1.0,
+        "recall_at_3": 0.25,
+        "recall_at_5": 0.25,
+        "by_type": {
+          "ordinary": {
+            "count": 9,
+            "recall_at_3": 0.2222222222222222,
+            "recall_at_5": 0.2222222222222222
+          },
+          "version_sensitive": {
+            "count": 2,
+            "recall_at_3": 0.0,
+            "recall_at_5": 0.0
+          },
+          "exact_term": {
+            "count": 4,
+            "recall_at_3": 0.5,
+            "recall_at_5": 0.5
+          },
+          "must_abstain": {
+            "count": 2,
+            "recall_at_3": null,
+            "recall_at_5": null
+          },
+          "prompt_injection": {
+            "count": 1,
+            "recall_at_3": 0.0,
+            "recall_at_5": 0.0
+          }
+        },
+        "retrieval_only": true
+      },
+      "structure": {
+        "size": 512,
+        "overlap": 64,
+        "strategy": "structure",
+        "chunks": 875,
+        "storage_amplification": 1.0128629294084908,
+        "recall_at_3": 0.9375,
+        "recall_at_5": 0.9375,
+        "by_type": {
+          "ordinary": {
+            "count": 9,
+            "recall_at_3": 1.0,
+            "recall_at_5": 1.0
+          },
+          "version_sensitive": {
+            "count": 2,
+            "recall_at_3": 0.5,
+            "recall_at_5": 0.5
+          },
+          "exact_term": {
+            "count": 4,
+            "recall_at_3": 1.0,
+            "recall_at_5": 1.0
+          },
+          "must_abstain": {
+            "count": 2,
+            "recall_at_3": null,
+            "recall_at_5": null
+          },
+          "prompt_injection": {
+            "count": 1,
+            "recall_at_3": 1.0,
+            "recall_at_5": 1.0
+          }
+        },
+        "retrieval_only": true
+      },
+      "boundary_example": {
+        "page": 53,
+        "end_of_window": "classified as Sensitive or Confidential into AI tools not supported by the University. Additionally, datasets containing information indirectly",
+        "next_window": "identifying individuals must not be submitted to unsupported AI tools. Furthermore, ensuring accuracy and integrity of information is",
+        "section": "Document"
+      }
+    },
+    "E": {
+      "question": "Can students register for more than five courses provided they are not getting ahead of their batch?",
+      "filtered": [
+        {
+          "id": "78354c1bd77e5077d021ff3a8d0c84927869167908daff22aef03bf9f4f03dc6",
+          "superseded": false,
+          "section": "Clause 6.6",
+          "page": 28,
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "doc_version": "2026-06",
+          "score": 0.76512349,
+          "excerpt": "6.6 A student will be allowed to repeat a maximum of 2 courses\n(with associated labs if any)."
+        },
+        {
+          "id": "ca6e9f2b3b00a909515d036077d023b2faa2f2ee09996e1cb67df8de8d8cde2a",
+          "section": "Clause 6.11",
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "superseded": false,
+          "doc_version": "2026-06",
+          "page": 29,
+          "score": 0.75481313,
+          "excerpt": "6.11 A minimum of TEN (10) students should register in a summer\ncourse. Otherwise, the course shall be dropped."
+        },
+        {
+          "id": "f741da096cef0bfce4104cdd38ac469b9b19ccfc96e67a73437d7beb3835cb7b",
+          "section": "Clause 1.19",
+          "superseded": false,
+          "doc_version": "2026-06",
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 9,
+          "score": 0.75465381,
+          "excerpt": "1.19 A student can register for a maximum of two courses in\nsummer semester in accordance with the rules for summer\nsemester. For more details, please see rule no 6: Rules for\nSummer Semester."
+        },
+        {
+          "id": "64466cd0f13fdf3d819322d44355c1728afc2529675845222b5b5609f7f8fa76",
+          "page": 9,
+          "doc_version": "2026-06",
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "superseded": false,
+          "section": "Clause 1.20",
+          "score": 0.73972476,
+          "excerpt": "1.20 A student can only register for courses for which he/she has\npassed all the pre-requisite courses as specified in the\napproved curriculum.\nU ndergraduate Academic Rules and Regulations 2026 3"
+        },
+        {
+          "id": "4b2b0dbc556fce696dea1b0b3793b7f2216acdbb72a672c333a5c95ede3cc5f8",
+          "doc_version": "2026-06",
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "page": 20,
+          "superseded": false,
+          "section": "Clause 4.5",
+          "score": 0.7335019700000001,
+          "excerpt": "4.5 A student must register for both the Theory and Lab part of a\ncourse."
+        }
+      ],
+      "filter_disabled": [
+        {
+          "id": "b4652d78997fc8a74305d2dac6ecbb48f6486e9b7001e94b13b88a94e7fd419c",
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "page": 14,
+          "superseded": true,
+          "doc_version": "2023-08",
+          "section": "Clause 4.3",
+          "score": 0.86824495,
+          "excerpt": "4.3, The normal course load is 5 courses; however, students can register\nfor more courses provided they are not getting ahead of their batch."
+        },
+        {
+          "id": "b94bac7683604cd5aeab3a97a7c60413efdc547ba4067449db82deecbd1ba5b0",
+          "page": 7,
+          "superseded": true,
+          "section": "Clause 1.19",
+          "doc_version": "2023-08",
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "score": 0.77665788,
+          "excerpt": "1.19 A student can register for a maximum of two courses in summer\nsemester, in accordance with the rules for summer semester."
+        },
+        {
+          "id": "8f9a1e4dea1c89bf48b2c2681adbe17070d709733eb31fd4ca80be8a6d4d72f8",
+          "doc_version": "2023-08",
+          "section": "Clause 1.20",
+          "source": "undergraduate-academic-rules-aug-2023.pdf",
+          "superseded": true,
+          "page": 7,
+          "score": 0.77180237,
+          "excerpt": "1.20 A student can only register for courses for which he/she has passed\nall the pre-requisite courses as specified in the approved curriculum."
+        },
+        {
+          "id": "78354c1bd77e5077d021ff3a8d0c84927869167908daff22aef03bf9f4f03dc6",
+          "superseded": false,
+          "page": 28,
+          "doc_version": "2026-06",
+          "section": "Clause 6.6",
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "score": 0.76512349,
+          "excerpt": "6.6 A student will be allowed to repeat a maximum of 2 courses\n(with associated labs if any)."
+        },
+        {
+          "id": "ca6e9f2b3b00a909515d036077d023b2faa2f2ee09996e1cb67df8de8d8cde2a",
+          "page": 29,
+          "source": "academic-rules-handbook-jun-2026.pdf",
+          "doc_version": "2026-06",
+          "section": "Clause 6.11",
+          "superseded": false,
+          "score": 0.75481313,
+          "excerpt": "6.11 A minimum of TEN (10) students should register in a summer\ncourse. Otherwise, the course shall be dropped."
+        }
+      ]
+    },
+    "C": {
+      "change": "collection pin changed while API remained nomic-embed-text",
+      "ready_status": 503,
+      "health_status": 200,
+      "query_status": 503,
+      "response": {
+        "status": "not_ready",
+        "checks": {
+          "chroma": "embedding pin mismatch: {'api_embed_model': 'nomic-embed-text', 'collection_embed_model': 'deliberately-wrong-embedding', 'api_embed_dim': 768, 'collection_embed_dim': 768, 'api_embedding_backend': 'ollama', 'collection_embedding_backend': 'ollama'}",
+          "redis": "ok"
+        },
+        "index_revision": null,
+        "configuration": {
+          "retriever": "chroma",
+          "llm_provider": "ollama-host",
+          "llm_model": "llama3.2:3b",
+          "embed_model": "nomic-embed-text",
+          "embed_dim": 768,
+          "collection": "rahbar_policies",
+          "top_k": 5,
+          "relevance_floor": 0.35,
+          "cache_threshold": 0.9
+        }
+      },
+      "request_id": "failure-C-demo"
+    }
+  },
+  "resource_sample": {
+    "platform": "Ubuntu WSL2, local process, not Kubernetes",
+    "provider": "stub",
+    "before_peak_rss_kib": 1083120,
+    "after_peak_rss_kib": 165492,
+    "method": "GNU time -v, full corpus including OCR; before/after closing pdfplumber page caches",
+    "exit_status": 0
+  }
+}

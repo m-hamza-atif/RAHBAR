@@ -53,6 +53,7 @@ def mock_pdf(monkeypatch, text=''):
     page = MagicMock()
     page.extract_text.return_value = text
     page.find_tables.return_value = []
+    page.within_bbox.return_value = page
     context = MagicMock()
     context.__enter__.return_value.pages = [page]
     monkeypatch.setattr(extract_module.pdfplumber, 'open', lambda _: context)
@@ -334,3 +335,35 @@ def test_malformed_ollama_response_is_rejected(settings, monkeypatch):
             200, json={'embeddings': [[1.], [1., 2.]]}))))
     with pytest.raises(ValueError, match='consistent dimensions'):
         embed(['a', 'b'], replace(settings, embed_model='nomic-embed-text', llm_provider='ollama-host'))
+
+
+def test_pdf_off_page_text_does_not_leak_into_extraction(tmp_path):
+    from pypdf import PdfWriter
+    from pypdf.generic import DictionaryObject, NameObject, DecodedStreamObject
+    writer=PdfWriter()
+    page=writer.add_blank_page(width=400,height=600)
+    font=DictionaryObject({NameObject('/Type'):NameObject('/Font'),
+                          NameObject('/Subtype'):NameObject('/Type1'),
+                          NameObject('/BaseFont'):NameObject('/Helvetica')})
+    page[NameObject('/Resources')]=DictionaryObject({NameObject('/Font'):DictionaryObject({NameObject('/F1'):font})})
+    stream=DecodedStreamObject()
+    stream.set_data(b'BT /F1 12 Tf 10 500 Td (Visible legitimate academic policy text.) Tj ET '
+                    b'BT /F1 12 Tf -200 500 Td (OFF_PAGE_GHOST) Tj ET')
+    page[NameObject('/Contents')]=writer._add_object(stream)
+    path=tmp_path/'two-up.pdf'
+    writer.write(path)
+    text=extract(str(path),'2026',False).pages[0].text
+    assert 'Visible legitimate' in text and 'OFF_PAGE_GHOST' not in text
+
+
+def test_ocr_clause_comma_has_stable_section_label():
+    pieces=chunk(document('4.3, The normal course load is five courses.\n4.4 A student must register for failed courses.'),512,64)
+    assert [p.section for p in pieces]==['Clause 4.3','Clause 4.4']
+
+
+def test_headings_enrich_clauses_instead_of_occupying_top_k_slots():
+    doc=document('# Rules\n\n## 3. Repeating a course\n\n3.1 A student may repeat any course to improve CGPA.')
+    pieces=chunk(doc,512,64)
+    assert len(pieces)==1 and pieces[0].section=='Clause 3.1'
+    assert 'Repeating a course' in pieces[0].text and 'repeat any course' in pieces[0].text
+    assert amplification(doc,pieces)==1

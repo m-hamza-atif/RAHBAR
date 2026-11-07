@@ -1,0 +1,26 @@
+{
+  "measurements": [
+    {
+      "relevance_floor": 0.15,
+      "recall_at_5": 1.0,
+      "citation_validity": 1.0,
+      "abstention_correctness": 1.0,
+      "grounded_answer_rate": 1.0
+    },
+    {
+      "relevance_floor": 0.25,
+      "recall_at_5": 0.8333333333333334,
+      "citation_validity": 1.0,
+      "abstention_correctness": 1.0,
+      "grounded_answer_rate": 1.0
+    },
+    {
+      "relevance_floor": 0.35,
+      "recall_at_5": 0.6666666666666666,
+      "citation_validity": 1.0,
+      "abstention_correctness": 1.0,
+      "grounded_answer_rate": 0.6666666666666666
+    }
+  ],
+  "selected_relevance_floor": 0.15
+}

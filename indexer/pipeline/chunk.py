@@ -24,15 +24,17 @@ def _sections(text: str, current: str) -> tuple[list[tuple[str, str]], str]:
         heading = re.match(r"^#{1,6}\s+(.+)", line)
         numbered = re.match(r"^\d+(?:\.\d+)*\.?\s+[A-Z].*", line)
         clause = re.fullmatch(r"\d+\.\d+(?:\.\d+)*", line.strip())
+        clause_line = re.match(r"^(\d+\.\d+(?:\.\d+)*)(?:[.,])?\s+", line.strip())
         words = line.split()
         title = (0 < len(words) <= 8 and all(
             word[:1].isupper() or word in {"of", "and", "the", "for", "under", "with"}
             for word in words) and not re.search(r"[.!?|]", line))
-        if heading or clause or title or (
+        if heading or clause or clause_line or title or (
                 numbered and token_count(line) <= 10 and not line.endswith('.')):
             if lines:
                 result.append((current, '\n'.join(lines)))
             current = (heading.group(1).strip() if heading else
+                       "Clause " + clause_line.group(1) if clause_line else
                        "Clause " + line.strip() if clause else line.strip())
             lines = [line]
         else:
@@ -73,10 +75,36 @@ def chunk(doc: Document, size: int, overlap: int,
     section = "Document"
     for page in doc.pages:
         sections, section = _sections(page.text, section)
+        labels = []
+        position = 0
+        for label, part in sections:
+            labels.append((position, label))
+            position += token_count(part)
         if chunk_strategy == "fixed":
             sections = [("Fixed window", page.text)]
+        else:
+            # A title without policy text should enrich its next clause, not occupy
+            # one of the scarce top-k slots as a separate two-word document.
+            merged: list[tuple[str, str]] = []
+            pending = ''
+            for label, part in sections:
+                bare = part.strip().lstrip('#').strip()
+                if bare == label or 'Clause ' + bare == label:
+                    pending += part + '\n\n'
+                else:
+                    merged.append((label, pending + part))
+                    pending = ''
+            if pending:
+                if merged:
+                    label, part = merged[-1]
+                    merged[-1] = (label, part + '\n\n' + pending)
+                else:
+                    merged = [(section, pending)]
+            sections = merged
         for index, (heading, text) in enumerate(sections):
             for offset, part in _windows(text, size, overlap, chunk_strategy == "structure"):
+                if chunk_strategy == "fixed":
+                    heading = next((label for pos, label in reversed(labels) if pos <= offset), heading)
                 identity = f"{doc.source}|{doc.doc_version}|{page.page}|{index}|{offset}|{part}"
                 pieces.append(Chunk(hashlib.sha256(identity.encode()).hexdigest(), part,
                                     doc.source, heading, page.page, str(doc.doc_version),

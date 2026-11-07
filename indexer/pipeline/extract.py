@@ -45,7 +45,7 @@ def ocr_page(path: str, page: int) -> str:
         raise RuntimeError("OCR requires tesseract-ocr and poppler-utils")
     images = convert_from_path(path, first_page=page, last_page=page, dpi=200)
     try:
-        return str(pytesseract.image_to_string(images[0], lang="eng"))
+        return str(pytesseract.image_to_string(images[0], lang="eng", config="--psm 6"))
     finally:
         for image in images:
             image.close()
@@ -122,7 +122,9 @@ def extract(path: str, doc_version: str, superseded: bool,
     pages = []
     if file.suffix.lower() == ".pdf":
         with pdfplumber.open(file) as pdf:
-            for number, page in enumerate(pdf.pages, 1):
+            for number, original_page in enumerate(pdf.pages, 1):
+                # Some published booklet pages contain off-page text from the facing page.
+                page = original_page.within_bbox(original_page.bbox)
                 text = page.extract_text() or ""
                 used_ocr = False
                 if len(re.sub(r"\s", "", text)) < 20:
@@ -146,6 +148,9 @@ def extract(path: str, doc_version: str, superseded: bool,
                     text = page.filter(outside_tables).extract_text() or ""
                     text += "\n\n" + "\n\n".join(table_markdown(t.extract()) for t in tables)
                 pages.append(Page(file.name, number, text, used_ocr))
+                # pdfplumber retains layouts/characters until explicitly released.
+                page.close()
+                original_page.close()
     elif file.suffix.lower() in {".html", ".htm"}:
         parser = PolicyHTML()
         parser.feed(file.read_text(encoding="utf-8"))

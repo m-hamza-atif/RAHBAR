@@ -1,0 +1,37 @@
+{
+  "production_ready": {
+    "status": "ready",
+    "checks": {
+      "chroma": "ok",
+      "redis": "ok"
+    },
+    "index_revision": "607d2b0290f94503b6124fcae8961d1a",
+    "configuration": {
+      "retriever": "chroma",
+      "llm_provider": "ollama-host",
+      "llm_model": "llama3.2:3b",
+      "embed_model": "nomic-embed-text",
+      "embed_dim": 768,
+      "collection": "rahbar_policies",
+      "top_k": 5,
+      "relevance_floor": 0.35,
+      "cache_threshold": 0.9
+    }
+  },
+  "production_rows": 875,
+  "ci_rows": 16,
+  "all_evaluation_requests_uncached": true,
+  "real_gate_passed": true,
+  "resource_fix_preserved_all_chunk_ids": true,
+  "full_eval_seconds": 156.77,
+  "offline_tests": 99,
+  "api_coverage_percent": 92.96407185628742,
+  "corpus_checksums_verified": true,
+  "temporary_api_servers_stopped": true,
+  "ollama_models_unloaded_after_tests": true,
+  "local_api_process_memory": {
+    "peak_working_set_bytes": 100564992,
+    "note": "Windows API process after real-model evaluation; Ollama and Docker memory excluded",
+    "current_working_set_bytes": 62853120
+  }
+}

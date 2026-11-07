@@ -5,6 +5,21 @@ fresh start or alongside existing work. Preserve both partners' changes. Impleme
 the integration yourself; give the human only actions requiring their access.
 Reference results below are observations to reproduce, not values to hardcode.
 
+## Starting state and manual Git ownership
+
+Partner B is starting from scratch with Partner A's completed work available.
+The human will pull the latest dev before starting the agent. Verify the checkout
+and preserve existing files; do not assume historical starter code is current.
+If required code is missing, ask the human to synchronize it while continuing
+independent work. Do not restart Partner A's completed phases.
+
+Humans handle fetch/pull/push and branch integration. The agent must not execute
+those operations, rebase/reset/force-push, or merge remote PRs. Inspect Git read-only,
+prepare reviewable changes, and provide the human exact safe commands. Create local
+commits only when requested. Sharing dev is acceptable; a separate feature branch
+is optional. Implementing publishing workflows remains in scope, but actual
+external publication requires human authorization/source pushes.
+
 ## What is now available
 
 The corpus/indexer, production API path, Redis cache, real probes, metrics,
@@ -77,6 +92,12 @@ minikube should be assumed to reach that server by default. Configure and verify
 trusted host/cluster connectivity only when doing the real deployment; stub CI
 is independent. OLLAMA_BASE_URL is preferred, with OLLAMA_URL retained as an alias.
 
+Partner A's Windows installation is a reference environment, not an endpoint
+automatically available on Partner B's different computer. Finish stub CI without
+it. For a required real-model deployment, agree with the human on an actually
+reachable model host; do not assume your localhost is Partner A's machine or
+download models merely to run CI.
+
 The indexer marks building/ready and invalidates only rahbar:cache:*; the API
 checks state, revision, model, dimension, backend, count and Redis. Do not put
 indexing in API startup. CronJob concurrencyPolicy=Forbid does not prevent a
@@ -98,6 +119,14 @@ The overall submission checker cannot be called clean until your artifacts and
 evidence are merged. Never fabricate screenshots, resource readings or successful
 CI publication. Partner A's local virtual environments and model files are not
 submission artifacts and should not be copied into images.
+
+Partner B's agent owns the first combined-system integration: reconcile interfaces,
+build/test the deployed fixture stack against its correct baseline, fix concrete
+compatibility problems, complete documentation/evidence and report genuine
+remaining blockers. Then provide manual Git instructions to the human. After the
+human pushes the finished work to dev, Partner A will pull manually and request
+an independent final Codex review. That second review does not replace Partner B's
+own complete integration checks.
 
 Final reference counts are 875 real-model chunks and 16 current CI fixture chunks.
 The final offline suite has 99 tests and API coverage about 92.96%. The root README

@@ -40,7 +40,12 @@ def main():
     def ready():
         response = client.get('/readyz')
         response.raise_for_status()
-        return response.json()
+        if 'application/json' not in response.headers.get('content-type', ''):
+            raise RuntimeError('Ingress /readyz returned non-JSON content')
+        data = response.json()
+        if data.get('status') != 'ready':
+            raise RuntimeError('API not ready: ' + str(data))
+        return data
 
     def ask():
         response = client.post('/api/ask', json={'question': 'When is a student placed on academic warning?'})
@@ -51,7 +56,7 @@ def main():
         for _ in range(60):
             try:
                 return ready()
-            except httpx.HTTPError:
+            except (httpx.HTTPError, json.JSONDecodeError, KeyError, RuntimeError):
                 time.sleep(2)
         raise RuntimeError('Ingress did not recover')
 

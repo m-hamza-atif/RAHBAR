@@ -72,7 +72,8 @@ jobs:
       - run: kubectl rollout status deployment/api --context kind-rahbar-cd -n rahbar --timeout=300s
       - name: Ephemeral fixture deployment acceptance through Ingress
         run: |
-          curl --fail --retry 10 --retry-all-errors --retry-delay 2 http://127.0.0.1:18080/readyz -H 'Host: rahbar.local'
+          python scripts/wait_for_ingress.py --url http://127.0.0.1:18080 --host rahbar.local
+          curl --fail http://127.0.0.1:18080/readyz -H 'Host: rahbar.local'
           curl --fail http://127.0.0.1:18080/api/ask -H 'Host: rahbar.local' -H 'Content-Type: application/json' -d '{"question":"When is a student placed on academic warning?"}'
           python eval/run_eval.py --api http://127.0.0.1:18080 --host rahbar.local --golden eval/fixtures/golden.fixture.yaml --baseline eval/fixtures/baseline.fixture.json --out .artifacts/results.fixture.json
       - if: always()

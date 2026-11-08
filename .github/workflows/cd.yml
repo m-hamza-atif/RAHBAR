@@ -14,7 +14,7 @@ jobs:
           python-version: '3.12'
       - run: pip install -r api/requirements-dev.txt -r indexer/requirements-dev.txt -r corpus/requirements-dev.txt
       - run: pytest --cov=api/app --cov-fail-under=60
-      - run: bash scripts/install_ci_tools.sh
+      - run: bash scripts/install_ci_tools.sh kubeconform
       - run: python scripts/validate_manifests.py --kubeconform kubeconform
   build-push:
     needs: test
@@ -32,7 +32,7 @@ jobs:
           docker build --provenance=false -t "$OWNER/rahbar-api:$TAG" api
           docker build --provenance=false -f indexer/Dockerfile -t "$OWNER/rahbar-indexer:$TAG" .
           docker build --provenance=false -t "$OWNER/rahbar-ui:$TAG" ui
-      - run: bash scripts/install_ci_tools.sh
+      - run: bash scripts/install_ci_tools.sh trivy
       - env:
           OWNER: ${{ secrets.DOCKERHUB_USERNAME }}
           TAG: ${{ github.sha }}
@@ -59,7 +59,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - run: pip install httpx==0.28.1 pyyaml==6.0.2
-      - run: bash scripts/install_ci_tools.sh
+      - run: bash scripts/install_ci_tools.sh kind
       - run: python scripts/cluster.py --name rahbar-cd
       - name: Pull and load the published SHA images
         run: |

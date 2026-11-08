@@ -40,7 +40,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install pyyaml==6.0.2
-      - run: bash scripts/install_ci_tools.sh
+      - run: bash scripts/install_ci_tools.sh kubeconform actionlint
       - run: python scripts/validate_manifests.py --kubeconform kubeconform
       - run: actionlint
   build:
@@ -71,7 +71,7 @@ jobs:
           name: images
           path: .artifacts
       - run: docker load -i .artifacts/images.tar
-      - run: bash scripts/install_ci_tools.sh
+      - run: bash scripts/install_ci_tools.sh trivy
       - env:
           TAG: ${{ github.sha }}
         run: |
@@ -91,7 +91,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install httpx==0.28.1 pyyaml==6.0.2
-      - run: bash scripts/install_ci_tools.sh
+      - run: bash scripts/install_ci_tools.sh kind
       - uses: actions/download-artifact@v4
         with:
           name: images

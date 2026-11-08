@@ -1,5 +1,11 @@
 # Branch Protection, CI/CD Gates & GitHub Actions Evidence Guide
 
+Current release status: [SUBMISSION-LINKS.md](../SUBMISSION-LINKS.md). PR #1 now
+exists and its branch rules were verified. CI at `8827fb6` failed during tool
+installation (HTTP 504); evaluation was skipped. That real blocked merge is not
+yet the evaluation-regression demonstration below. Local installer fixes add
+retries, release-API fallback and per-job tool selection.
+
 > [!NOTE]
 > In accordance with project instructions and safeguards, automated agents are strictly forbidden from executing remote Git actions (`git push`, `git merge`, creating remote PRs, modifying `main`, or publishing images to Docker Hub).
 > This document records the local verification status of all CI/CD pipelines and provides the exact procedure and templates for the required human GitHub actions.

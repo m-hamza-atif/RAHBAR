@@ -1,5 +1,10 @@
 # Independent final review — 8 November 2026
 
+Release follow-up: the human has since pushed `8827fb6`, opened PR #1 and added
+Docker Hub secrets. See [current submission links/status](SUBMISSION-LINKS.md)
+for the subsequent download failures, fixes and remaining steps. The original
+review below predates that PR.
+
 Reviewed integrated `dev` at `2efaa98` and the local fixes listed below. The code
 checks pass; the submission still needs the real GitHub release and its URLs.
 No remote Git operation, PR, image publication or merge was performed by this review.

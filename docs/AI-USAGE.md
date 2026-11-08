@@ -115,3 +115,14 @@ systems. The full public-corpus Kubernetes Job completed with 875 chunks and
 and 2/2 correct abstentions. Codex updated `eval/results.json` with that genuine
 run, preserved the frozen baseline, and recorded the temporary node-only routing
 diagnosis explicitly. Windows model binding/firewall settings were not changed.
+
+### Release follow-up
+
+After the human pushed 8827fb6 and opened PR #1, Codex inspected the supplied
+screenshots and read public GitHub jobs/rulesets and Docker Hub repositories/tags.
+All failed jobs stopped at tool installation; the PR's scan passed and evaluation
+was skipped. It added bounded retry/API-fallback downloads and per-job tool
+selection, preserving every scan/evaluation gate. Three Linux regression cases,
+bash syntax, Ruff and actionlint passed; a real pinned actionlint install succeeded.
+Verified links/status are in docs/SUBMISSION-LINKS.md. No commit, push, merge,
+image publication, secret retrieval or fabricated screenshot/result was performed.

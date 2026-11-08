@@ -1,0 +1,1447 @@
+Captured 2026-11-07T19:21:27.665371+00:00 context=kind-rahbar-b
+
+$ kubectl --context kind-rahbar-b -n rahbar get pods -o wide
+exit=0
+NAME                                READY   STATUS      RESTARTS   AGE     IP                NODE                     NOMINATED NODE   READINESS GATES
+api-64dc54667-ccngc                 1/1     Running     0          30s     192.168.202.238   rahbar-b-control-plane   <none>           <none>
+api-64dc54667-hznbk                 1/1     Running     0          34s     192.168.202.237   rahbar-b-control-plane   <none>           <none>
+api-64dc54667-m8c5k                 1/1     Running     0          26s     192.168.202.239   rahbar-b-control-plane   <none>           <none>
+chroma-0                            1/1     Running     0          84s     192.168.202.229   rahbar-b-control-plane   <none>           <none>
+indexer-6mrl8                       0/1     Completed   0          23m     192.168.202.207   rahbar-b-control-plane   <none>           <none>
+redis-5b65859689-55c79              1/1     Running     0          80s     192.168.202.230   rahbar-b-control-plane   <none>           <none>
+reindex-1794078133942982600-fzf26   0/1     Completed   0          19m     192.168.202.218   rahbar-b-control-plane   <none>           <none>
+reindex-1794078142416925100-6kswh   0/1     Completed   0          19m     192.168.202.219   rahbar-b-control-plane   <none>           <none>
+reindex-1794079111564438100-kzk6l   0/1     Completed   0          2m56s   192.168.202.227   rahbar-b-control-plane   <none>           <none>
+reindex-1794079173094924700-2vvmr   0/1     Completed   0          114s    192.168.202.228   rahbar-b-control-plane   <none>           <none>
+reindex-1794079210873694300-z7sj7   0/1     Completed   0          77s     192.168.202.231   rahbar-b-control-plane   <none>           <none>
+reindex-1794079219298740300-4v4d6   0/1     Completed   0          68s     192.168.202.232   rahbar-b-control-plane   <none>           <none>
+ui-d86dd77f8-bzp8n                  1/1     Running     0          19m     192.168.202.213   rahbar-b-control-plane   <none>           <none>
+
+
+
+$ kubectl --context kind-rahbar-b -n rahbar get endpoints api
+exit=0
+NAME   ENDPOINTS                                                        AGE
+api    192.168.202.237:8000,192.168.202.238:8000,192.168.202.239:8000   30m
+
+
+
+$ kubectl --context kind-rahbar-b -n rahbar get endpointslices -l kubernetes.io/service-name=api -o yaml
+exit=0
+apiVersion: v1
+items:
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 192.168.202.237
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rahbar-b-control-plane
+    targetRef:
+      kind: Pod
+      name: api-64dc54667-hznbk
+      namespace: rahbar
+      uid: e9c78565-6cdb-4df2-9160-1bbac55f6c82
+  - addresses:
+    - 192.168.202.238
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rahbar-b-control-plane
+    targetRef:
+      kind: Pod
+      name: api-64dc54667-ccngc
+      namespace: rahbar
+      uid: 38899c8a-12fe-4655-ae05-de549c8db84a
+  - addresses:
+    - 192.168.202.239
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rahbar-b-control-plane
+    targetRef:
+      kind: Pod
+      name: api-64dc54667-m8c5k
+      namespace: rahbar
+      uid: 28fbc6a1-1980-4647-90f3-ab0269746c08
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-11-07T19:21:12Z"
+    creationTimestamp: "2026-11-07T18:51:16Z"
+    generateName: api-
+    generation: 73
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: api
+    name: api-qtqs2
+    namespace: rahbar
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: api
+      uid: 345c6d3f-03d4-41af-a187-c14c21507627
+    resourceVersion: "5038"
+    uid: 98d6e9ca-7fc5-4d61-97f2-543eb6a763fc
+  ports:
+  - name: http
+    port: 8000
+    protocol: TCP
+kind: List
+metadata:
+  resourceVersion: ""
+
+
+
+$ kubectl --context kind-rahbar-b -n rahbar get hpa
+exit=0
+NAME   REFERENCE        TARGETS              MINPODS   MAXPODS   REPLICAS   AGE
+api    Deployment/api   cpu: <unknown>/70%   3         8         3          23m
+
+
+
+$ kubectl --context kind-rahbar-b -n rahbar top pods
+exit=0
+NAME                     CPU(cores)   MEMORY(bytes)   
+api-64dc54667-ccngc      2m           66Mi            
+api-64dc54667-hznbk      2m           67Mi            
+api-64dc54667-m8c5k      105m         66Mi            
+chroma-0                 1m           20Mi            
+redis-5b65859689-55c79   7m           4Mi             
+ui-d86dd77f8-bzp8n       1m           2Mi             
+
+
+
+$ kubectl --context kind-rahbar-b -n rahbar get jobs
+exit=0
+NAME                          STATUS     COMPLETIONS   DURATION   AGE
+indexer                       Complete   1/1           8s         23m
+reindex-1794078133942982600   Complete   1/1           5s         19m
+reindex-1794078142416925100   Complete   1/1           5s         19m
+reindex-1794079111564438100   Complete   1/1           6s         2m57s
+reindex-1794079173094924700   Complete   1/1           5s         115s
+reindex-1794079210873694300   Complete   1/1           6s         78s
+reindex-1794079219298740300   Complete   1/1           5s         69s
+
+
+
+$ kubectl --context kind-rahbar-b -n rahbar get pvc
+exit=0
+NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+corpus          Bound    pvc-c3314d1b-0862-4cee-9994-bbb9d8f5a698   1Gi        RWO            standard       <unset>                 30m
+data-chroma-0   Bound    pvc-f833d207-8a6d-41cd-84f3-8ea5bba227e3   2Gi        RWO            standard       <unset>                 30m
+redis-data      Bound    pvc-4aafb0b0-9284-4d8d-ba33-da8d36d03572   1Gi        RWO            standard       <unset>                 30m
+
+
+
+$ kubectl --context kind-rahbar-b -n rahbar get events --sort-by=.lastTimestamp
+exit=0
+LAST SEEN   TYPE      REASON                         OBJECT                                  MESSAGE
+30m         Normal    WaitForFirstConsumer           persistentvolumeclaim/redis-data        waiting for first consumer to be created before binding
+30m         Normal    SuccessfulCreate               replicaset/redis-6cf6d779f              Created pod: redis-6cf6d779f-chftf
+30m         Normal    Provisioning                   persistentvolumeclaim/data-chroma-0     External provisioner is provisioning volume for claim "rahbar/data-chroma-0"
+30m         Normal    ScalingReplicaSet              deployment/redis                        Scaled up replica set redis-6cf6d779f from 0 to 1
+30m         Normal    WaitForFirstConsumer           persistentvolumeclaim/data-chroma-0     waiting for first consumer to be created before binding
+30m         Normal    Provisioning                   persistentvolumeclaim/redis-data        External provisioner is provisioning volume for claim "rahbar/redis-data"
+30m         Normal    SuccessfulCreate               statefulset/chroma                      create Claim data-chroma-0 Pod chroma-0 in StatefulSet chroma success
+30m         Normal    ExternalProvisioning           persistentvolumeclaim/redis-data        Waiting for a volume to be created either by the external provisioner 'rancher.io/local-path' or manually by the system administrator. If volume creation is delayed, please verify that the provisioner is running and correctly registered.
+30m         Normal    ExternalProvisioning           persistentvolumeclaim/data-chroma-0     Waiting for a volume to be created either by the external provisioner 'rancher.io/local-path' or manually by the system administrator. If volume creation is delayed, please verify that the provisioner is running and correctly registered.
+30m         Normal    ProvisioningSucceeded          persistentvolumeclaim/data-chroma-0     Successfully provisioned volume pvc-f833d207-8a6d-41cd-84f3-8ea5bba227e3
+30m         Normal    ProvisioningSucceeded          persistentvolumeclaim/redis-data        Successfully provisioned volume pvc-4aafb0b0-9284-4d8d-ba33-da8d36d03572
+30m         Normal    Pulling                        pod/chroma-0                            Pulling image "chromadb/chroma:1.0.12"
+30m         Normal    Scheduled                      pod/chroma-0                            Successfully assigned rahbar/chroma-0 to rahbar-b-control-plane
+30m         Normal    Scheduled                      pod/redis-6cf6d779f-chftf               Successfully assigned rahbar/redis-6cf6d779f-chftf to rahbar-b-control-plane
+30m         Normal    Pulling                        pod/redis-6cf6d779f-chftf               Pulling image "redis:7.4.2-alpine"
+29m         Normal    Created                        pod/redis-6cf6d779f-chftf               Created container: redis
+29m         Normal    Pulled                         pod/redis-6cf6d779f-chftf               Successfully pulled image "redis:7.4.2-alpine" in 7.461s (12.181s including waiting). Image size: 17238094 bytes.
+29m         Normal    Started                        pod/redis-6cf6d779f-chftf               Started container redis
+29m         Normal    Pulled                         pod/chroma-0                            Successfully pulled image "chromadb/chroma:1.0.12" in 50.76s (1m2.852s including waiting). Image size: 148254322 bytes.
+25m         Normal    Pulled                         pod/chroma-0                            Container image "chromadb/chroma:1.0.12" already present on machine
+25m         Normal    Created                        pod/chroma-0                            Created container: chroma
+25m         Normal    Started                        pod/chroma-0                            Started container chroma
+24m         Normal    WaitForFirstConsumer           persistentvolumeclaim/corpus            waiting for first consumer to be created before binding
+23m         Warning   BackOff                        pod/chroma-0                            Back-off restarting failed container chroma in pod chroma-0_rahbar(7f7a5499-ef6f-465c-803d-181ae52ebe76)
+23m         Normal    Scheduled                      pod/chroma-0                            Successfully assigned rahbar/chroma-0 to rahbar-b-control-plane
+23m         Normal    ScalingReplicaSet              deployment/redis                        Scaled down replica set redis-6cf6d779f from 1 to 0
+23m         Normal    Started                        pod/chroma-0                            Started container chroma
+23m         Normal    Killing                        pod/redis-6cf6d779f-chftf               Stopping container redis
+23m         Normal    SuccessfulDelete               replicaset/redis-6cf6d779f              Deleted pod: redis-6cf6d779f-chftf
+23m         Normal    Pulled                         pod/chroma-0                            Container image "chromadb/chroma:1.0.12" already present on machine
+23m         Normal    Created                        pod/chroma-0                            Created container: chroma
+23m         Normal    SuccessfulCreate               replicaset/redis-8474494f99             Created pod: redis-8474494f99-llrxp
+23m         Normal    Scheduled                      pod/redis-8474494f99-llrxp              Successfully assigned rahbar/redis-8474494f99-llrxp to rahbar-b-control-plane
+23m         Normal    ScalingReplicaSet              deployment/redis                        Scaled up replica set redis-8474494f99 from 0 to 1
+23m         Normal    Started                        pod/redis-8474494f99-llrxp              Started container redis
+23m         Normal    Created                        pod/redis-8474494f99-llrxp              Created container: redis
+23m         Normal    Pulled                         pod/redis-8474494f99-llrxp              Container image "redis:7.4.2-alpine" already present on machine
+23m         Normal    Provisioning                   persistentvolumeclaim/corpus            External provisioner is provisioning volume for claim "rahbar/corpus"
+23m         Normal    SuccessfulCreate               job/indexer                             Created pod: indexer-6mrl8
+23m         Normal    ProvisioningSucceeded          persistentvolumeclaim/corpus            Successfully provisioned volume pvc-c3314d1b-0862-4cee-9994-bbb9d8f5a698
+23m         Normal    Scheduled                      pod/indexer-6mrl8                       Successfully assigned rahbar/indexer-6mrl8 to rahbar-b-control-plane
+23m         Normal    Started                        pod/indexer-6mrl8                       Started container indexer
+23m         Normal    Created                        pod/indexer-6mrl8                       Created container: indexer
+23m         Normal    Pulled                         pod/indexer-6mrl8                       Container image "rahbar-indexer:dev" already present on machine
+23m         Normal    Completed                      job/indexer                             Job completed
+23m         Normal    Started                        pod/api-76bffdf5d8-gjhpc                Started container api
+23m         Normal    SuccessfulCreate               replicaset/api-76bffdf5d8               Created pod: api-76bffdf5d8-szqzb
+23m         Normal    Scheduled                      pod/api-76bffdf5d8-7b7vs                Successfully assigned rahbar/api-76bffdf5d8-7b7vs to rahbar-b-control-plane
+23m         Normal    Started                        pod/api-76bffdf5d8-7b7vs                Started container api
+23m         Normal    Pulled                         pod/api-76bffdf5d8-szqzb                Container image "rahbar-api:dev" already present on machine
+23m         Normal    Scheduled                      pod/api-76bffdf5d8-gjhpc                Successfully assigned rahbar/api-76bffdf5d8-gjhpc to rahbar-b-control-plane
+23m         Normal    Pulled                         pod/api-76bffdf5d8-gjhpc                Container image "rahbar-api:dev" already present on machine
+23m         Normal    Created                        pod/api-76bffdf5d8-gjhpc                Created container: api
+23m         Normal    SuccessfulCreate               replicaset/api-76bffdf5d8               Created pod: api-76bffdf5d8-gjhpc
+23m         Normal    Created                        pod/api-76bffdf5d8-szqzb                Created container: api
+23m         Normal    SuccessfulCreate               replicaset/api-76bffdf5d8               Created pod: api-76bffdf5d8-7b7vs
+23m         Normal    SuccessfulCreate               replicaset/ui-b74466bc                  Created pod: ui-b74466bc-dhllr
+23m         Normal    ScalingReplicaSet              deployment/ui                           Scaled up replica set ui-b74466bc from 0 to 1
+23m         Normal    Started                        pod/api-76bffdf5d8-szqzb                Started container api
+23m         Normal    Scheduled                      pod/api-76bffdf5d8-szqzb                Successfully assigned rahbar/api-76bffdf5d8-szqzb to rahbar-b-control-plane
+23m         Normal    ScalingReplicaSet              deployment/api                          Scaled up replica set api-76bffdf5d8 from 0 to 3
+23m         Normal    Scheduled                      pod/ui-b74466bc-dhllr                   Successfully assigned rahbar/ui-b74466bc-dhllr to rahbar-b-control-plane
+23m         Normal    Created                        pod/api-76bffdf5d8-7b7vs                Created container: api
+23m         Normal    Pulled                         pod/api-76bffdf5d8-7b7vs                Container image "rahbar-api:dev" already present on machine
+23m         Normal    Created                        pod/ui-b74466bc-dhllr                   Created container: ui
+23m         Normal    Started                        pod/ui-b74466bc-dhllr                   Started container ui
+23m         Normal    Pulled                         pod/ui-b74466bc-dhllr                   Container image "rahbar-ui:dev" already present on machine
+23m         Warning   Unhealthy                      pod/api-76bffdf5d8-szqzb                Startup probe failed: Get "http://192.168.202.210:8000/healthz": dial tcp 192.168.202.210:8000: connect: connection refused
+23m         Warning   Unhealthy                      pod/api-76bffdf5d8-gjhpc                Startup probe failed: Get "http://192.168.202.209:8000/healthz": dial tcp 192.168.202.209:8000: connect: connection refused
+23m         Warning   Unhealthy                      pod/api-76bffdf5d8-7b7vs                Startup probe failed: Get "http://192.168.202.208:8000/healthz": dial tcp 192.168.202.208:8000: connect: connection refused
+23m         Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/api             invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+23m         Warning   FailedGetResourceMetric        horizontalpodautoscaler/api             failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+19m         Normal    ScalingReplicaSet              deployment/ui                           Scaled up replica set ui-d86dd77f8 from 0 to 1
+19m         Normal    SuccessfulCreate               replicaset/ui-d86dd77f8                 Created pod: ui-d86dd77f8-bzp8n
+19m         Normal    SuccessfulCreate               replicaset/api-64dc54667                Created pod: api-64dc54667-m4pw9
+19m         Normal    Scheduled                      pod/api-64dc54667-m4pw9                 Successfully assigned rahbar/api-64dc54667-m4pw9 to rahbar-b-control-plane
+19m         Normal    Scheduled                      pod/ui-d86dd77f8-bzp8n                  Successfully assigned rahbar/ui-d86dd77f8-bzp8n to rahbar-b-control-plane
+19m         Normal    Pulled                         pod/ui-d86dd77f8-bzp8n                  Container image "rahbar-ui:verified" already present on machine
+19m         Normal    Created                        pod/ui-d86dd77f8-bzp8n                  Created container: ui
+19m         Normal    Started                        pod/api-64dc54667-m4pw9                 Started container api
+19m         Normal    Created                        pod/api-64dc54667-m4pw9                 Created container: api
+19m         Normal    Started                        pod/ui-d86dd77f8-bzp8n                  Started container ui
+19m         Normal    Pulled                         pod/api-64dc54667-m4pw9                 Container image "rahbar-api:verified" already present on machine
+19m         Warning   Unhealthy                      pod/api-64dc54667-m4pw9                 Startup probe failed: Get "http://192.168.202.212:8000/healthz": dial tcp 192.168.202.212:8000: connect: connection refused
+19m         Normal    SuccessfulDelete               replicaset/ui-b74466bc                  Deleted pod: ui-b74466bc-dhllr
+19m         Normal    Killing                        pod/ui-b74466bc-dhllr                   Stopping container ui
+19m         Normal    ScalingReplicaSet              deployment/ui                           Scaled down replica set ui-b74466bc from 1 to 0
+19m         Normal    Killing                        pod/api-76bffdf5d8-gjhpc                Stopping container api
+19m         Normal    Scheduled                      pod/api-64dc54667-dj6tk                 Successfully assigned rahbar/api-64dc54667-dj6tk to rahbar-b-control-plane
+19m         Normal    ScalingReplicaSet              deployment/api                          Scaled down replica set api-76bffdf5d8 from 3 to 2
+19m         Normal    SuccessfulDelete               replicaset/api-76bffdf5d8               Deleted pod: api-76bffdf5d8-gjhpc
+19m         Normal    SuccessfulCreate               replicaset/api-64dc54667                Created pod: api-64dc54667-dj6tk
+19m         Normal    Pulled                         pod/api-64dc54667-dj6tk                 Container image "rahbar-api:verified" already present on machine
+19m         Normal    Created                        pod/api-64dc54667-dj6tk                 Created container: api
+19m         Normal    Started                        pod/api-64dc54667-dj6tk                 Started container api
+19m         Warning   Unhealthy                      pod/api-64dc54667-dj6tk                 Startup probe failed: Get "http://192.168.202.214:8000/healthz": dial tcp 192.168.202.214:8000: connect: connection refused
+19m         Normal    ScalingReplicaSet              deployment/api                          Scaled down replica set api-76bffdf5d8 from 2 to 1
+19m         Normal    SuccessfulCreate               replicaset/api-64dc54667                Created pod: api-64dc54667-lx244
+19m         Normal    Killing                        pod/api-76bffdf5d8-szqzb                Stopping container api
+19m         Normal    Scheduled                      pod/api-64dc54667-lx244                 Successfully assigned rahbar/api-64dc54667-lx244 to rahbar-b-control-plane
+19m         Normal    Pulled                         pod/api-64dc54667-lx244                 Container image "rahbar-api:verified" already present on machine
+19m         Normal    Created                        pod/api-64dc54667-lx244                 Created container: api
+19m         Normal    SuccessfulDelete               replicaset/api-76bffdf5d8               Deleted pod: api-76bffdf5d8-szqzb
+19m         Normal    Started                        pod/api-64dc54667-lx244                 Started container api
+19m         Warning   Unhealthy                      pod/api-64dc54667-lx244                 Startup probe failed: Get "http://192.168.202.215:8000/healthz": dial tcp 192.168.202.215:8000: connect: connection refused
+19m         Normal    SuccessfulDelete               replicaset/api-76bffdf5d8               Deleted pod: api-76bffdf5d8-7b7vs
+19m         Normal    ScalingReplicaSet              deployment/api                          Scaled down replica set api-76bffdf5d8 from 1 to 0
+19m         Normal    Killing                        pod/api-76bffdf5d8-7b7vs                Stopping container api
+19m         Normal    Killing                        pod/chroma-0                            Stopping container chroma
+19m         Normal    Created                        pod/chroma-0                            Created container: chroma
+19m         Normal    Pulled                         pod/chroma-0                            Container image "chromadb/chroma:1.0.12" already present on machine
+19m         Normal    Scheduled                      pod/chroma-0                            Successfully assigned rahbar/chroma-0 to rahbar-b-control-plane
+19m         Normal    Started                        pod/chroma-0                            Started container chroma
+19m         Normal    SuccessfulDelete               replicaset/redis-8474494f99             Deleted pod: redis-8474494f99-llrxp
+19m         Normal    Killing                        pod/redis-8474494f99-llrxp              Stopping container redis
+19m         Normal    ScalingReplicaSet              deployment/redis                        Scaled down replica set redis-8474494f99 from 1 to 0
+19m         Normal    SuccessfulCreate               replicaset/redis-5645c76975             Created pod: redis-5645c76975-787ww
+19m         Normal    Pulled                         pod/redis-5645c76975-787ww              Container image "redis:7.4.2-alpine" already present on machine
+19m         Normal    ScalingReplicaSet              deployment/redis                        Scaled up replica set redis-5645c76975 from 0 to 1
+19m         Normal    Created                        pod/redis-5645c76975-787ww              Created container: redis
+19m         Normal    Scheduled                      pod/redis-5645c76975-787ww              Successfully assigned rahbar/redis-5645c76975-787ww to rahbar-b-control-plane
+19m         Normal    Started                        pod/redis-5645c76975-787ww              Started container redis
+19m         Normal    Pulled                         pod/reindex-1794078133942982600-fzf26   Container image "rahbar-indexer:verified" already present on machine
+19m         Normal    Scheduled                      pod/reindex-1794078133942982600-fzf26   Successfully assigned rahbar/reindex-1794078133942982600-fzf26 to rahbar-b-control-plane
+19m         Normal    Created                        pod/reindex-1794078133942982600-fzf26   Created container: indexer
+19m         Normal    Started                        pod/reindex-1794078133942982600-fzf26   Started container indexer
+19m         Normal    SuccessfulCreate               job/reindex-1794078133942982600         Created pod: reindex-1794078133942982600-fzf26
+19m         Normal    Completed                      job/reindex-1794078133942982600         Job completed
+19m         Normal    SuccessfulCreate               job/reindex-1794078142416925100         Created pod: reindex-1794078142416925100-6kswh
+19m         Normal    Scheduled                      pod/reindex-1794078142416925100-6kswh   Successfully assigned rahbar/reindex-1794078142416925100-6kswh to rahbar-b-control-plane
+19m         Normal    Pulled                         pod/reindex-1794078142416925100-6kswh   Container image "rahbar-indexer:verified" already present on machine
+19m         Normal    Started                        pod/reindex-1794078142416925100-6kswh   Started container indexer
+19m         Normal    Created                        pod/reindex-1794078142416925100-6kswh   Created container: indexer
+19m         Normal    Completed                      job/reindex-1794078142416925100         Job completed
+18m         Normal    Scheduled                      pod/api-pin-test                        Successfully assigned rahbar/api-pin-test to rahbar-b-control-plane
+18m         Normal    Created                        pod/api-pin-test                        Created container: api
+18m         Normal    Started                        pod/api-pin-test                        Started container api
+18m         Normal    Pulled                         pod/api-pin-test                        Container image "rahbar-api:verified" already present on machine
+18m         Warning   Unhealthy                      pod/api-pin-test                        Startup probe failed: Get "http://192.168.202.220:8000/healthz": dial tcp 192.168.202.220:8000: connect: connection refused
+18m         Warning   Unhealthy                      pod/api-pin-test                        Readiness probe failed: HTTP probe failed with statuscode: 503
+18m         Normal    Killing                        pod/api-pin-test                        Stopping container api
+18m         Normal    SuccessfulCreate               replicaset/api-5754c9b86f               Created pod: api-5754c9b86f-s6hk7
+18m         Normal    ScalingReplicaSet              deployment/api                          Scaled up replica set api-5754c9b86f from 0 to 1
+18m         Normal    Scheduled                      pod/api-5754c9b86f-s6hk7                Successfully assigned rahbar/api-5754c9b86f-s6hk7 to rahbar-b-control-plane
+18m         Normal    Started                        pod/api-5754c9b86f-s6hk7                Started container api
+18m         Normal    Pulled                         pod/api-5754c9b86f-s6hk7                Container image "rahbar-api:verified" already present on machine
+18m         Normal    Created                        pod/api-5754c9b86f-s6hk7                Created container: api
+18m         Warning   Unhealthy                      pod/api-5754c9b86f-s6hk7                Startup probe failed: Get "http://192.168.202.221:8000/healthz": dial tcp 192.168.202.221:8000: connect: connection refused
+18m         Normal    Killing                        pod/api-64dc54667-dj6tk                 Stopping container api
+18m         Normal    SuccessfulDelete               replicaset/api-64dc54667                Deleted pod: api-64dc54667-dj6tk
+18m         Normal    SuccessfulCreate               replicaset/api-5754c9b86f               Created pod: api-5754c9b86f-9kc49
+18m         Normal    Scheduled                      pod/api-5754c9b86f-9kc49                Successfully assigned rahbar/api-5754c9b86f-9kc49 to rahbar-b-control-plane
+18m         Normal    Pulled                         pod/api-5754c9b86f-9kc49                Container image "rahbar-api:verified" already present on machine
+18m         Normal    Created                        pod/api-5754c9b86f-9kc49                Created container: api
+18m         Normal    Started                        pod/api-5754c9b86f-9kc49                Started container api
+18m         Warning   Unhealthy                      pod/api-5754c9b86f-9kc49                Startup probe failed: Get "http://192.168.202.222:8000/healthz": dial tcp 192.168.202.222:8000: connect: connection refused
+18m         Normal    SuccessfulDelete               replicaset/api-64dc54667                Deleted pod: api-64dc54667-lx244
+18m         Normal    SuccessfulCreate               replicaset/api-5754c9b86f               Created pod: api-5754c9b86f-b2ns4
+18m         Normal    Scheduled                      pod/api-5754c9b86f-b2ns4                Successfully assigned rahbar/api-5754c9b86f-b2ns4 to rahbar-b-control-plane
+18m         Normal    Killing                        pod/api-64dc54667-lx244                 Stopping container api
+18m         Normal    Pulled                         pod/api-5754c9b86f-b2ns4                Container image "rahbar-api:verified" already present on machine
+18m         Warning   Unhealthy                      pod/api-64dc54667-dj6tk                 Readiness probe failed: Get "http://192.168.202.214:8000/readyz": dial tcp 192.168.202.214:8000: connect: connection refused
+18m         Normal    Created                        pod/api-5754c9b86f-b2ns4                Created container: api
+18m         Normal    Started                        pod/api-5754c9b86f-b2ns4                Started container api
+18m         Warning   Unhealthy                      pod/api-5754c9b86f-b2ns4                Startup probe failed: Get "http://192.168.202.223:8000/healthz": dial tcp 192.168.202.223:8000: connect: connection refused
+18m         Normal    Killing                        pod/api-64dc54667-m4pw9                 Stopping container api
+18m         Normal    SuccessfulDelete               replicaset/api-64dc54667                Deleted pod: api-64dc54667-m4pw9
+18m         Warning   Unhealthy                      pod/api-64dc54667-lx244                 Readiness probe failed: Get "http://192.168.202.215:8000/readyz": dial tcp 192.168.202.215:8000: connect: connection refused
+18m         Normal    Created                        pod/api-64dc54667-sj9b4                 Created container: api
+18m         Normal    Pulled                         pod/api-64dc54667-sj9b4                 Container image "rahbar-api:verified" already present on machine
+18m         Normal    SuccessfulCreate               replicaset/api-64dc54667                Created pod: api-64dc54667-sj9b4
+18m         Normal    Scheduled                      pod/api-64dc54667-sj9b4                 Successfully assigned rahbar/api-64dc54667-sj9b4 to rahbar-b-control-plane
+18m         Normal    Started                        pod/api-64dc54667-sj9b4                 Started container api
+18m         Warning   Unhealthy                      pod/api-64dc54667-sj9b4                 Startup probe failed: Get "http://192.168.202.224:8000/healthz": dial tcp 192.168.202.224:8000: connect: connection refused
+18m         Normal    SuccessfulDelete               replicaset/api-5754c9b86f               Deleted pod: api-5754c9b86f-b2ns4
+18m         Normal    Scheduled                      pod/api-64dc54667-lps42                 Successfully assigned rahbar/api-64dc54667-lps42 to rahbar-b-control-plane
+18m         Normal    SuccessfulCreate               replicaset/api-64dc54667                Created pod: api-64dc54667-lps42
+18m         Normal    Killing                        pod/api-5754c9b86f-b2ns4                Stopping container api
+18m         Normal    Pulled                         pod/api-64dc54667-lps42                 Container image "rahbar-api:verified" already present on machine
+18m         Normal    Created                        pod/api-64dc54667-lps42                 Created container: api
+18m         Normal    Started                        pod/api-64dc54667-lps42                 Started container api
+18m         Warning   Unhealthy                      pod/api-64dc54667-lps42                 Startup probe failed: Get "http://192.168.202.225:8000/healthz": dial tcp 192.168.202.225:8000: connect: connection refused
+18m         Normal    SuccessfulCreate               replicaset/api-64dc54667                Created pod: api-64dc54667-vzgbz
+18m         Normal    Scheduled                      pod/api-64dc54667-vzgbz                 Successfully assigned rahbar/api-64dc54667-vzgbz to rahbar-b-control-plane
+18m         Normal    SuccessfulDelete               replicaset/api-5754c9b86f               Deleted pod: api-5754c9b86f-9kc49
+18m         Normal    Killing                        pod/api-5754c9b86f-9kc49                Stopping container api
+18m         Normal    ScalingReplicaSet              deployment/api                          Scaled up replica set api-64dc54667 from 2 to 3
+18m         Normal    Started                        pod/api-64dc54667-vzgbz                 Started container api
+18m         Warning   Unhealthy                      pod/api-5754c9b86f-b2ns4                Readiness probe failed: Get "http://192.168.202.223:8000/readyz": dial tcp 192.168.202.223:8000: connect: connection refused
+18m         Normal    Pulled                         pod/api-64dc54667-vzgbz                 Container image "rahbar-api:verified" already present on machine
+18m         Normal    Created                        pod/api-64dc54667-vzgbz                 Created container: api
+18m         Warning   Unhealthy                      pod/api-64dc54667-vzgbz                 Startup probe failed: Get "http://192.168.202.226:8000/healthz": dial tcp 192.168.202.226:8000: connect: connection refused
+18m         Normal    Killing                        pod/api-5754c9b86f-s6hk7                Stopping container api
+18m         Normal    SuccessfulDelete               replicaset/api-5754c9b86f               Deleted pod: api-5754c9b86f-s6hk7
+2m57s       Normal    SuccessfulCreate               job/reindex-1794079111564438100         Created pod: reindex-1794079111564438100-kzk6l
+2m57s       Normal    Scheduled                      pod/reindex-1794079111564438100-kzk6l   Successfully assigned rahbar/reindex-1794079111564438100-kzk6l to rahbar-b-control-plane
+2m56s       Normal    Started                        pod/reindex-1794079111564438100-kzk6l   Started container indexer
+2m56s       Normal    Created                        pod/reindex-1794079111564438100-kzk6l   Created container: indexer
+2m56s       Normal    Pulled                         pod/reindex-1794079111564438100-kzk6l   Container image "rahbar-indexer:verified" already present on machine
+2m51s       Normal    Completed                      job/reindex-1794079111564438100         Job completed
+115s        Normal    Created                        pod/reindex-1794079173094924700-2vvmr   Created container: indexer
+115s        Normal    SuccessfulCreate               job/reindex-1794079173094924700         Created pod: reindex-1794079173094924700-2vvmr
+115s        Normal    Pulled                         pod/reindex-1794079173094924700-2vvmr   Container image "rahbar-indexer:verified" already present on machine
+115s        Normal    Scheduled                      pod/reindex-1794079173094924700-2vvmr   Successfully assigned rahbar/reindex-1794079173094924700-2vvmr to rahbar-b-control-plane
+115s        Normal    Started                        pod/reindex-1794079173094924700-2vvmr   Started container indexer
+110s        Normal    Completed                      job/reindex-1794079173094924700         Job completed
+86s         Normal    Killing                        pod/chroma-0                            Stopping container chroma
+85s         Normal    Pulled                         pod/chroma-0                            Container image "chromadb/chroma:1.0.12" already present on machine
+85s         Normal    Scheduled                      pod/chroma-0                            Successfully assigned rahbar/chroma-0 to rahbar-b-control-plane
+85s         Normal    Created                        pod/chroma-0                            Created container: chroma
+85s         Normal    SuccessfulCreate               statefulset/chroma                      create Pod chroma-0 in StatefulSet chroma successful
+84s         Normal    Started                        pod/chroma-0                            Started container chroma
+81s         Normal    ScalingReplicaSet              deployment/redis                        Scaled up replica set redis-5b65859689 from 0 to 1
+81s         Normal    ScalingReplicaSet              deployment/redis                        Scaled down replica set redis-5645c76975 from 1 to 0
+81s         Normal    SuccessfulCreate               replicaset/redis-5b65859689             Created pod: redis-5b65859689-55c79
+81s         Normal    Scheduled                      pod/redis-5b65859689-55c79              Successfully assigned rahbar/redis-5b65859689-55c79 to rahbar-b-control-plane
+81s         Normal    SuccessfulDelete               replicaset/redis-5645c76975             Deleted pod: redis-5645c76975-787ww
+81s         Normal    Killing                        pod/redis-5645c76975-787ww              Stopping container redis
+80s         Normal    Created                        pod/redis-5b65859689-55c79              Created container: redis
+80s         Normal    Pulled                         pod/redis-5b65859689-55c79              Container image "redis:7.4.2-alpine" already present on machine
+80s         Normal    Started                        pod/redis-5b65859689-55c79              Started container redis
+78s         Normal    SuccessfulCreate               job/reindex-1794079210873694300         Created pod: reindex-1794079210873694300-z7sj7
+78s         Normal    Scheduled                      pod/reindex-1794079210873694300-z7sj7   Successfully assigned rahbar/reindex-1794079210873694300-z7sj7 to rahbar-b-control-plane
+77s         Normal    Started                        pod/reindex-1794079210873694300-z7sj7   Started container indexer
+77s         Normal    Created                        pod/reindex-1794079210873694300-z7sj7   Created container: indexer
+77s         Normal    Pulled                         pod/reindex-1794079210873694300-z7sj7   Container image "rahbar-indexer:verified" already present on machine
+72s         Normal    Completed                      job/reindex-1794079210873694300         Job completed
+69s         Normal    Scheduled                      pod/reindex-1794079219298740300-4v4d6   Successfully assigned rahbar/reindex-1794079219298740300-4v4d6 to rahbar-b-control-plane
+69s         Normal    Pulled                         pod/reindex-1794079219298740300-4v4d6   Container image "rahbar-indexer:verified" already present on machine
+69s         Normal    SuccessfulCreate               job/reindex-1794079219298740300         Created pod: reindex-1794079219298740300-4v4d6
+68s         Normal    Started                        pod/reindex-1794079219298740300-4v4d6   Started container indexer
+68s         Normal    Created                        pod/reindex-1794079219298740300-4v4d6   Created container: indexer
+64s         Normal    Completed                      job/reindex-1794079219298740300         Job completed
+61s         Normal    Scheduled                      pod/api-pin-test                        Successfully assigned rahbar/api-pin-test to rahbar-b-control-plane
+61s         Normal    Pulled                         pod/api-pin-test                        Container image "rahbar-api:verified" already present on machine
+61s         Normal    Created                        pod/api-pin-test                        Created container: api
+61s         Normal    Started                        pod/api-pin-test                        Started container api
+59s         Warning   Unhealthy                      pod/api-pin-test                        Startup probe failed: Get "http://192.168.202.233:8000/healthz": dial tcp 192.168.202.233:8000: connect: connection refused
+55s         Warning   Unhealthy                      pod/api-pin-test                        Readiness probe failed: HTTP probe failed with statuscode: 503
+55s         Normal    Killing                        pod/api-pin-test                        Stopping container api
+49s         Normal    ScalingReplicaSet              deployment/api                          Scaled up replica set api-7d66786c89 from 0 to 1
+49s         Normal    SuccessfulCreate               replicaset/api-7d66786c89               Created pod: api-7d66786c89-tpvgn
+49s         Normal    Scheduled                      pod/api-7d66786c89-tpvgn                Successfully assigned rahbar/api-7d66786c89-tpvgn to rahbar-b-control-plane
+48s         Normal    Created                        pod/api-7d66786c89-tpvgn                Created container: api
+48s         Normal    Pulled                         pod/api-7d66786c89-tpvgn                Container image "rahbar-api:verified" already present on machine
+48s         Normal    Started                        pod/api-7d66786c89-tpvgn                Started container api
+47s         Warning   Unhealthy                      pod/api-7d66786c89-tpvgn                Startup probe failed: Get "http://192.168.202.234:8000/healthz": dial tcp 192.168.202.234:8000: connect: connection refused
+45s         Normal    SuccessfulDelete               replicaset/api-64dc54667                Deleted pod: api-64dc54667-vzgbz
+45s         Normal    ScalingReplicaSet              deployment/api                          Scaled down replica set api-64dc54667 from 3 to 2
+45s         Normal    SuccessfulCreate               replicaset/api-7d66786c89               Created pod: api-7d66786c89-hgndq
+45s         Normal    ScalingReplicaSet              deployment/api                          Scaled up replica set api-7d66786c89 from 1 to 2
+45s         Normal    Killing                        pod/api-64dc54667-vzgbz                 Stopping container api
+44s         Normal    Scheduled                      pod/api-7d66786c89-hgndq                Successfully assigned rahbar/api-7d66786c89-hgndq to rahbar-b-control-plane
+44s         Normal    Pulled                         pod/api-7d66786c89-hgndq                Container image "rahbar-api:verified" already present on machine
+44s         Normal    Started                        pod/api-7d66786c89-hgndq                Started container api
+44s         Normal    Created                        pod/api-7d66786c89-hgndq                Created container: api
+42s         Warning   Unhealthy                      pod/api-7d66786c89-hgndq                Startup probe failed: Get "http://192.168.202.235:8000/healthz": dial tcp 192.168.202.235:8000: connect: connection refused
+40s         Normal    ScalingReplicaSet              deployment/api                          Scaled up replica set api-7d66786c89 from 2 to 3
+40s         Normal    SuccessfulDelete               replicaset/api-64dc54667                Deleted pod: api-64dc54667-lps42
+40s         Normal    SuccessfulCreate               replicaset/api-7d66786c89               Created pod: api-7d66786c89-wzj97
+40s         Normal    ScalingReplicaSet              deployment/api                          Scaled down replica set api-64dc54667 from 2 to 1
+40s         Normal    Scheduled                      pod/api-7d66786c89-wzj97                Successfully assigned rahbar/api-7d66786c89-wzj97 to rahbar-b-control-plane
+40s         Normal    Killing                        pod/api-64dc54667-lps42                 Stopping container api
+39s         Normal    Started                        pod/api-7d66786c89-wzj97                Started container api
+39s         Normal    Created                        pod/api-7d66786c89-wzj97                Created container: api
+39s         Warning   Unhealthy                      pod/api-64dc54667-vzgbz                 Readiness probe failed: Get "http://192.168.202.226:8000/readyz": dial tcp 192.168.202.226:8000: connect: connection refused
+39s         Normal    Pulled                         pod/api-7d66786c89-wzj97                Container image "rahbar-api:verified" already present on machine
+38s         Warning   Unhealthy                      pod/api-7d66786c89-wzj97                Startup probe failed: Get "http://192.168.202.236:8000/healthz": dial tcp 192.168.202.236:8000: connect: connection refused
+36s         Normal    SuccessfulDelete               replicaset/api-64dc54667                Deleted pod: api-64dc54667-sj9b4
+36s         Normal    ScalingReplicaSet              deployment/api                          Scaled down replica set api-64dc54667 from 1 to 0
+36s         Normal    Killing                        pod/api-64dc54667-sj9b4                 Stopping container api
+35s         Normal    Pulled                         pod/api-64dc54667-hznbk                 Container image "rahbar-api:verified" already present on machine
+35s         Normal    SuccessfulCreate               replicaset/api-64dc54667                Created pod: api-64dc54667-hznbk
+35s         Normal    Started                        pod/api-64dc54667-hznbk                 Started container api
+35s         Normal    Created                        pod/api-64dc54667-hznbk                 Created container: api
+35s         Normal    Scheduled                      pod/api-64dc54667-hznbk                 Successfully assigned rahbar/api-64dc54667-hznbk to rahbar-b-control-plane
+35s         Normal    ScalingReplicaSet              deployment/api                          Scaled up replica set api-64dc54667 from 0 to 1
+33s         Warning   Unhealthy                      pod/api-64dc54667-hznbk                 Startup probe failed: Get "http://192.168.202.237:8000/healthz": dial tcp 192.168.202.237:8000: connect: connection refused
+31s         Normal    ScalingReplicaSet              deployment/api                          Scaled down replica set api-7d66786c89 from 3 to 2
+31s         Normal    SuccessfulDelete               replicaset/api-7d66786c89               Deleted pod: api-7d66786c89-wzj97
+31s         Normal    SuccessfulCreate               replicaset/api-64dc54667                Created pod: api-64dc54667-ccngc
+31s         Normal    Scheduled                      pod/api-64dc54667-ccngc                 Successfully assigned rahbar/api-64dc54667-ccngc to rahbar-b-control-plane
+31s         Normal    Killing                        pod/api-7d66786c89-wzj97                Stopping container api
+31s         Normal    ScalingReplicaSet              deployment/api                          Scaled up replica set api-64dc54667 from 1 to 2
+30s         Normal    Created                        pod/api-64dc54667-ccngc                 Created container: api
+30s         Normal    Pulled                         pod/api-64dc54667-ccngc                 Container image "rahbar-api:verified" already present on machine
+30s         Normal    Started                        pod/api-64dc54667-ccngc                 Started container api
+29s         Warning   Unhealthy                      pod/api-64dc54667-ccngc                 Startup probe failed: Get "http://192.168.202.238:8000/healthz": dial tcp 192.168.202.238:8000: connect: connection refused
+27s         Normal    Killing                        pod/api-7d66786c89-hgndq                Stopping container api
+27s         Normal    Scheduled                      pod/api-64dc54667-m8c5k                 Successfully assigned rahbar/api-64dc54667-m8c5k to rahbar-b-control-plane
+27s         Normal    SuccessfulDelete               replicaset/api-7d66786c89               Deleted pod: api-7d66786c89-hgndq
+27s         Normal    SuccessfulCreate               replicaset/api-64dc54667                Created pod: api-64dc54667-m8c5k
+27s         Normal    ScalingReplicaSet              deployment/api                          (combined from similar events): Scaled down replica set api-7d66786c89 from 2 to 1
+26s         Normal    Pulled                         pod/api-64dc54667-m8c5k                 Container image "rahbar-api:verified" already present on machine
+26s         Normal    Created                        pod/api-64dc54667-m8c5k                 Created container: api
+26s         Warning   Unhealthy                      pod/api-7d66786c89-wzj97                Readiness probe failed: Get "http://192.168.202.236:8000/readyz": dial tcp 192.168.202.236:8000: connect: connection refused
+26s         Normal    Started                        pod/api-64dc54667-m8c5k                 Started container api
+24s         Warning   Unhealthy                      pod/api-64dc54667-m8c5k                 Startup probe failed: Get "http://192.168.202.239:8000/healthz": dial tcp 192.168.202.239:8000: connect: connection refused
+22s         Normal    Killing                        pod/api-7d66786c89-tpvgn                Stopping container api
+22s         Normal    SuccessfulDelete               replicaset/api-7d66786c89               Deleted pod: api-7d66786c89-tpvgn
+9s          Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/api             invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+9s          Warning   FailedGetResourceMetric        horizontalpodautoscaler/api             failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+
+
+
+$ kubectl --context kind-rahbar-b -n rahbar describe pods
+exit=0
+Name:             api-64dc54667-ccngc
+Namespace:        rahbar
+Priority:         0
+Service Account:  api
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:20:57 +0500
+Labels:           app=api
+                  pod-template-hash=64dc54667
+Annotations:      cni.projectcalico.org/containerID: c51049156327e8af076d55564dabd7949dc050744976748e9c67cd373dee30cd
+                  cni.projectcalico.org/podIP: 192.168.202.238/32
+                  cni.projectcalico.org/podIPs: 192.168.202.238/32
+Status:           Running
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.238
+IPs:
+  IP:           192.168.202.238
+Controlled By:  ReplicaSet/api-64dc54667
+Containers:
+  api:
+    Container ID:   containerd://f65b80b51580ee0a1cc6d3110202f5efd33d42af295b8e8520752f13adb46221
+    Image:          rahbar-api:verified
+    Image ID:       sha256:353b0f9d12725fe8ae060feeaa386cf29c0d5d10d5a1e86f52f3a7dd90b1256c
+    Port:           8000/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Sun, 08 Nov 2026 00:20:58 +0500
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  512Mi
+    Requests:
+      cpu:      100m
+      memory:   128Mi
+    Liveness:   http-get http://:8000/healthz delay=0s timeout=5s period=20s #success=1 #failure=3
+    Readiness:  http-get http://:8000/readyz delay=0s timeout=5s period=10s #success=1 #failure=3
+    Startup:    http-get http://:8000/healthz delay=0s timeout=5s period=2s #success=1 #failure=30
+    Environment Variables from:
+      rahbar-config  ConfigMap  Optional: false
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:        EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:      
+    SizeLimit:   256Mi
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             api-64dc54667-hznbk
+Namespace:        rahbar
+Priority:         0
+Service Account:  api
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:20:53 +0500
+Labels:           app=api
+                  pod-template-hash=64dc54667
+Annotations:      cni.projectcalico.org/containerID: a6d09e9e93057dc463cf1b61804e7205bdcff7d70a88a8641f345d42c7bb43a0
+                  cni.projectcalico.org/podIP: 192.168.202.237/32
+                  cni.projectcalico.org/podIPs: 192.168.202.237/32
+Status:           Running
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.237
+IPs:
+  IP:           192.168.202.237
+Controlled By:  ReplicaSet/api-64dc54667
+Containers:
+  api:
+    Container ID:   containerd://1e67ccba45cbaa2a37a884a8c41a9be1a7375a6c0a81517af4876a148b330a2a
+    Image:          rahbar-api:verified
+    Image ID:       sha256:353b0f9d12725fe8ae060feeaa386cf29c0d5d10d5a1e86f52f3a7dd90b1256c
+    Port:           8000/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Sun, 08 Nov 2026 00:20:53 +0500
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  512Mi
+    Requests:
+      cpu:      100m
+      memory:   128Mi
+    Liveness:   http-get http://:8000/healthz delay=0s timeout=5s period=20s #success=1 #failure=3
+    Readiness:  http-get http://:8000/readyz delay=0s timeout=5s period=10s #success=1 #failure=3
+    Startup:    http-get http://:8000/healthz delay=0s timeout=5s period=2s #success=1 #failure=30
+    Environment Variables from:
+      rahbar-config  ConfigMap  Optional: false
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:        EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:      
+    SizeLimit:   256Mi
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             api-64dc54667-m8c5k
+Namespace:        rahbar
+Priority:         0
+Service Account:  api
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:21:01 +0500
+Labels:           app=api
+                  pod-template-hash=64dc54667
+Annotations:      cni.projectcalico.org/containerID: 24e8f97657ab5ec05ea5141a7e36f22302531857276420f8c4984c452bfa79be
+                  cni.projectcalico.org/podIP: 192.168.202.239/32
+                  cni.projectcalico.org/podIPs: 192.168.202.239/32
+Status:           Running
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.239
+IPs:
+  IP:           192.168.202.239
+Controlled By:  ReplicaSet/api-64dc54667
+Containers:
+  api:
+    Container ID:   containerd://73d9ddb7f82bf4af3f89e4881945e4b56a0ff2ad6905e5b54f2cbc0d537d0037
+    Image:          rahbar-api:verified
+    Image ID:       sha256:353b0f9d12725fe8ae060feeaa386cf29c0d5d10d5a1e86f52f3a7dd90b1256c
+    Port:           8000/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Sun, 08 Nov 2026 00:21:02 +0500
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  512Mi
+    Requests:
+      cpu:      100m
+      memory:   128Mi
+    Liveness:   http-get http://:8000/healthz delay=0s timeout=5s period=20s #success=1 #failure=3
+    Readiness:  http-get http://:8000/readyz delay=0s timeout=5s period=10s #success=1 #failure=3
+    Startup:    http-get http://:8000/healthz delay=0s timeout=5s period=2s #success=1 #failure=30
+    Environment Variables from:
+      rahbar-config  ConfigMap  Optional: false
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:        EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:      
+    SizeLimit:   256Mi
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             chroma-0
+Namespace:        rahbar
+Priority:         0
+Service Account:  chroma
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:20:03 +0500
+Labels:           app=chroma
+                  apps.kubernetes.io/pod-index=0
+                  controller-revision-hash=chroma-6646c94d6f
+                  statefulset.kubernetes.io/pod-name=chroma-0
+Annotations:      cni.projectcalico.org/containerID: e46c3e275de0e4068f867a0c0a9111a1f7c4d7fb83063487a250957b1166f3f7
+                  cni.projectcalico.org/podIP: 192.168.202.229/32
+                  cni.projectcalico.org/podIPs: 192.168.202.229/32
+Status:           Running
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.229
+IPs:
+  IP:           192.168.202.229
+Controlled By:  StatefulSet/chroma
+Containers:
+  chroma:
+    Container ID:   containerd://09192ac4b26a48cbdf48f47aee0a9f5b17ffd7b36171e836f649f5570b9caa86
+    Image:          chromadb/chroma:1.0.12
+    Image ID:       docker.io/chromadb/chroma@sha256:28a3b2c05c74c83686c2273d4d0994b80c481805d0f47887f289c53a4616e592
+    Port:           8000/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Sun, 08 Nov 2026 00:20:04 +0500
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     1
+      memory:  1Gi
+    Requests:
+      cpu:      250m
+      memory:   256Mi
+    Liveness:   http-get http://:8000/api/v2/heartbeat delay=0s timeout=5s period=20s #success=1 #failure=3
+    Readiness:  http-get http://:8000/api/v2/heartbeat delay=0s timeout=5s period=10s #success=1 #failure=3
+    Startup:    http-get http://:8000/api/v2/heartbeat delay=0s timeout=5s period=2s #success=1 #failure=60
+    Environment:
+      CHROMA_PERSIST_PATH:   /data
+      HOME:                  /tmp
+      ANONYMIZED_TELEMETRY:  False
+    Mounts:
+      /data from data (rw)
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  data-chroma-0
+    ReadOnly:   false
+  tmp:
+    Type:        EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:      
+    SizeLimit:   256Mi
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             indexer-6mrl8
+Namespace:        rahbar
+Priority:         0
+Service Account:  indexer
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sat, 07 Nov 2026 23:57:59 +0500
+Labels:           app=indexer
+                  batch.kubernetes.io/controller-uid=eb4e25a9-3807-4bf9-ac99-246703a10a3a
+                  batch.kubernetes.io/job-name=indexer
+                  controller-uid=eb4e25a9-3807-4bf9-ac99-246703a10a3a
+                  job-name=indexer
+Annotations:      cni.projectcalico.org/containerID: 6d3fde2941abf5b25d0f69fa0b8ad3a42d839adc4b918faab865975d63ea3e8c
+                  cni.projectcalico.org/podIP: 
+                  cni.projectcalico.org/podIPs: 
+Status:           Succeeded
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.207
+IPs:
+  IP:           192.168.202.207
+Controlled By:  Job/indexer
+Containers:
+  indexer:
+    Container ID:   containerd://a22f2e55b76b23e977dc0491b704cfbbac59ce85986fb1a9466615f0269a6275
+    Image:          rahbar-indexer:dev
+    Image ID:       sha256:33d2dc4b8bc4fc9d8acc6b685288381b5b4f68630ecf92188a0210933cb475d5
+    Port:           <none>
+    Host Port:      <none>
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Sat, 07 Nov 2026 23:57:59 +0500
+      Finished:     Sat, 07 Nov 2026 23:58:01 +0500
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:     250m
+      memory:  512Mi
+    Environment Variables from:
+      rahbar-config  ConfigMap  Optional: false
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /corpus from corpus (ro)
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  256Mi
+  corpus:
+    Type:        PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:   corpus
+    ReadOnly:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             redis-5b65859689-55c79
+Namespace:        rahbar
+Priority:         0
+Service Account:  redis
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:20:07 +0500
+Labels:           app=redis
+                  pod-template-hash=5b65859689
+Annotations:      cni.projectcalico.org/containerID: 333e53ef03f7b347d5b1d33e313138f566ea1310bdd7e4b6659083f1ddd4eb07
+                  cni.projectcalico.org/podIP: 192.168.202.230/32
+                  cni.projectcalico.org/podIPs: 192.168.202.230/32
+                  kubectl.kubernetes.io/restartedAt: 2026-11-08T00:20:07+05:00
+Status:           Running
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.230
+IPs:
+  IP:           192.168.202.230
+Controlled By:  ReplicaSet/redis-5b65859689
+Containers:
+  redis:
+    Container ID:  containerd://16c01f1543852310ece498dc9e4d338a82c3d661c5c5cb06f7dffd225ae2113d
+    Image:         redis:7.4.2-alpine
+    Image ID:      docker.io/library/redis@sha256:02419de7eddf55aa5bcf49efb74e88fa8d931b4d77c07eff8a6b2144472b6952
+    Port:          6379/TCP (redis)
+    Host Port:     0/TCP (redis)
+    Command:
+      redis-server
+    Args:
+      --appendonly
+      yes
+      --appendfsync
+      everysec
+      --dir
+      /data
+    State:          Running
+      Started:      Sun, 08 Nov 2026 00:20:08 +0500
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     500m
+      memory:  256Mi
+    Requests:
+      cpu:      100m
+      memory:   64Mi
+    Liveness:   exec [redis-cli ping] delay=0s timeout=1s period=20s #success=1 #failure=3
+    Readiness:  exec [redis-cli ping] delay=0s timeout=1s period=5s #success=1 #failure=3
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /data from data (rw)
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  256Mi
+  data:
+    Type:        PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:   redis-data
+    ReadOnly:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             reindex-1794078133942982600-fzf26
+Namespace:        rahbar
+Priority:         0
+Service Account:  indexer
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:02:14 +0500
+Labels:           app=indexer
+                  batch.kubernetes.io/controller-uid=d36ad213-e8f8-4c07-b4b5-df717fd1ac6a
+                  batch.kubernetes.io/job-name=reindex-1794078133942982600
+                  controller-uid=d36ad213-e8f8-4c07-b4b5-df717fd1ac6a
+                  job-name=reindex-1794078133942982600
+Annotations:      cni.projectcalico.org/containerID: 04361032c2fe58b63263340d184e4498fe775139e330bc8e6bde4760767496a7
+                  cni.projectcalico.org/podIP: 
+                  cni.projectcalico.org/podIPs: 
+Status:           Succeeded
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.218
+IPs:
+  IP:           192.168.202.218
+Controlled By:  Job/reindex-1794078133942982600
+Containers:
+  indexer:
+    Container ID:   containerd://a97e3b17064134f34ecd3b2d0e8d9723123dcd11c15da06a511890bda0dc3c0b
+    Image:          rahbar-indexer:verified
+    Image ID:       sha256:dddb0e326b6a2a95c892b15315601869c878999f9b95334a0cc053f404c3976f
+    Port:           <none>
+    Host Port:      <none>
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Sun, 08 Nov 2026 00:02:14 +0500
+      Finished:     Sun, 08 Nov 2026 00:02:16 +0500
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:     250m
+      memory:  512Mi
+    Environment Variables from:
+      rahbar-config  ConfigMap  Optional: false
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /corpus from corpus (ro)
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  256Mi
+  corpus:
+    Type:        PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:   corpus
+    ReadOnly:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             reindex-1794078142416925100-6kswh
+Namespace:        rahbar
+Priority:         0
+Service Account:  indexer
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:02:22 +0500
+Labels:           app=indexer
+                  batch.kubernetes.io/controller-uid=2b077a62-b115-4a4e-8300-d60557d809de
+                  batch.kubernetes.io/job-name=reindex-1794078142416925100
+                  controller-uid=2b077a62-b115-4a4e-8300-d60557d809de
+                  job-name=reindex-1794078142416925100
+Annotations:      cni.projectcalico.org/containerID: 5d6a8d77c6ca024cd2cb9c5df643677cc8dfbb08cf405306d14ce10207274464
+                  cni.projectcalico.org/podIP: 
+                  cni.projectcalico.org/podIPs: 
+Status:           Succeeded
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.219
+IPs:
+  IP:           192.168.202.219
+Controlled By:  Job/reindex-1794078142416925100
+Containers:
+  indexer:
+    Container ID:   containerd://837b37146d8febc77080eaa4302d792060376fec2c24b09585d6ffbbba6aece7
+    Image:          rahbar-indexer:verified
+    Image ID:       sha256:dddb0e326b6a2a95c892b15315601869c878999f9b95334a0cc053f404c3976f
+    Port:           <none>
+    Host Port:      <none>
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Sun, 08 Nov 2026 00:02:23 +0500
+      Finished:     Sun, 08 Nov 2026 00:02:24 +0500
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:     250m
+      memory:  512Mi
+    Environment Variables from:
+      rahbar-config  ConfigMap  Optional: false
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /corpus from corpus (ro)
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  256Mi
+  corpus:
+    Type:        PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:   corpus
+    ReadOnly:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             reindex-1794079111564438100-kzk6l
+Namespace:        rahbar
+Priority:         0
+Service Account:  indexer
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:18:31 +0500
+Labels:           app=indexer
+                  batch.kubernetes.io/controller-uid=78ddbbdd-7a14-4a43-bcca-98ab0589c99f
+                  batch.kubernetes.io/job-name=reindex-1794079111564438100
+                  controller-uid=78ddbbdd-7a14-4a43-bcca-98ab0589c99f
+                  job-name=reindex-1794079111564438100
+Annotations:      cni.projectcalico.org/containerID: 0ff47a7495c638acff2d15ab076e0681e413503f6404b79cdab3e261a33452dd
+                  cni.projectcalico.org/podIP: 
+                  cni.projectcalico.org/podIPs: 
+Status:           Succeeded
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.227
+IPs:
+  IP:           192.168.202.227
+Controlled By:  Job/reindex-1794079111564438100
+Containers:
+  indexer:
+    Container ID:   containerd://5fc2a463c3d894a6cc48996eb034bf0881691237ba57669a655085e9193bf11e
+    Image:          rahbar-indexer:verified
+    Image ID:       sha256:dddb0e326b6a2a95c892b15315601869c878999f9b95334a0cc053f404c3976f
+    Port:           <none>
+    Host Port:      <none>
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Sun, 08 Nov 2026 00:18:32 +0500
+      Finished:     Sun, 08 Nov 2026 00:18:34 +0500
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:     250m
+      memory:  512Mi
+    Environment Variables from:
+      rahbar-config  ConfigMap  Optional: false
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /corpus from corpus (ro)
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  256Mi
+  corpus:
+    Type:        PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:   corpus
+    ReadOnly:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             reindex-1794079173094924700-2vvmr
+Namespace:        rahbar
+Priority:         0
+Service Account:  indexer
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:19:33 +0500
+Labels:           app=indexer
+                  batch.kubernetes.io/controller-uid=8eb658b4-d7cd-4c77-a338-efa200d5591c
+                  batch.kubernetes.io/job-name=reindex-1794079173094924700
+                  controller-uid=8eb658b4-d7cd-4c77-a338-efa200d5591c
+                  job-name=reindex-1794079173094924700
+Annotations:      cni.projectcalico.org/containerID: e07ffe65829a8b1a62e3d3d15bd9d5f4d0eff59493d4e66ba378a01f6c17538d
+                  cni.projectcalico.org/podIP: 
+                  cni.projectcalico.org/podIPs: 
+Status:           Succeeded
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.228
+IPs:
+  IP:           192.168.202.228
+Controlled By:  Job/reindex-1794079173094924700
+Containers:
+  indexer:
+    Container ID:   containerd://d7e3e0e7a38f60cb31bd5ea9a01f9274122baf862b33f49d237a0b1cdb4e1d9e
+    Image:          rahbar-indexer:verified
+    Image ID:       sha256:dddb0e326b6a2a95c892b15315601869c878999f9b95334a0cc053f404c3976f
+    Port:           <none>
+    Host Port:      <none>
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Sun, 08 Nov 2026 00:19:33 +0500
+      Finished:     Sun, 08 Nov 2026 00:19:35 +0500
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:     250m
+      memory:  512Mi
+    Environment Variables from:
+      rahbar-config  ConfigMap  Optional: false
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /corpus from corpus (ro)
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  256Mi
+  corpus:
+    Type:        PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:   corpus
+    ReadOnly:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             reindex-1794079210873694300-z7sj7
+Namespace:        rahbar
+Priority:         0
+Service Account:  indexer
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:20:10 +0500
+Labels:           app=indexer
+                  batch.kubernetes.io/controller-uid=96fdf247-45e1-41c4-bf6e-9d357e7c7a92
+                  batch.kubernetes.io/job-name=reindex-1794079210873694300
+                  controller-uid=96fdf247-45e1-41c4-bf6e-9d357e7c7a92
+                  job-name=reindex-1794079210873694300
+Annotations:      cni.projectcalico.org/containerID: 772ea1544904187bdd0a8fa8ec33fd4f20b2017785114394b283f6d3b9997d46
+                  cni.projectcalico.org/podIP: 
+                  cni.projectcalico.org/podIPs: 
+Status:           Succeeded
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.231
+IPs:
+  IP:           192.168.202.231
+Controlled By:  Job/reindex-1794079210873694300
+Containers:
+  indexer:
+    Container ID:   containerd://9afead57b1b1d254647ba07ea0f79c03b402c4e5114282ff5a2e834de8512151
+    Image:          rahbar-indexer:verified
+    Image ID:       sha256:dddb0e326b6a2a95c892b15315601869c878999f9b95334a0cc053f404c3976f
+    Port:           <none>
+    Host Port:      <none>
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Sun, 08 Nov 2026 00:20:11 +0500
+      Finished:     Sun, 08 Nov 2026 00:20:13 +0500
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:     250m
+      memory:  512Mi
+    Environment Variables from:
+      rahbar-config  ConfigMap  Optional: false
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /corpus from corpus (ro)
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  256Mi
+  corpus:
+    Type:        PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:   corpus
+    ReadOnly:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             reindex-1794079219298740300-4v4d6
+Namespace:        rahbar
+Priority:         0
+Service Account:  indexer
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:20:19 +0500
+Labels:           app=indexer
+                  batch.kubernetes.io/controller-uid=69a9c46b-1844-4dbf-8561-e2cf2eb33044
+                  batch.kubernetes.io/job-name=reindex-1794079219298740300
+                  controller-uid=69a9c46b-1844-4dbf-8561-e2cf2eb33044
+                  job-name=reindex-1794079219298740300
+Annotations:      cni.projectcalico.org/containerID: 0b756101cfe8987f031403c60c0dd4650193459b72e85f8444cebaf871c53546
+                  cni.projectcalico.org/podIP: 
+                  cni.projectcalico.org/podIPs: 
+Status:           Succeeded
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.232
+IPs:
+  IP:           192.168.202.232
+Controlled By:  Job/reindex-1794079219298740300
+Containers:
+  indexer:
+    Container ID:   containerd://3f975d3c9b2452adc70bfbc2778c59ffa36066eeb424055715e20fe34eb5d901
+    Image:          rahbar-indexer:verified
+    Image ID:       sha256:dddb0e326b6a2a95c892b15315601869c878999f9b95334a0cc053f404c3976f
+    Port:           <none>
+    Host Port:      <none>
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Sun, 08 Nov 2026 00:20:20 +0500
+      Finished:     Sun, 08 Nov 2026 00:20:21 +0500
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     1500m
+      memory:  1536Mi
+    Requests:
+      cpu:     250m
+      memory:  512Mi
+    Environment Variables from:
+      rahbar-config  ConfigMap  Optional: false
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /corpus from corpus (ro)
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  256Mi
+  corpus:
+    Type:        PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:   corpus
+    ReadOnly:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             ui-d86dd77f8-bzp8n
+Namespace:        rahbar
+Priority:         0
+Service Account:  ui
+Node:             rahbar-b-control-plane/172.19.0.2
+Start Time:       Sun, 08 Nov 2026 00:01:43 +0500
+Labels:           app=ui
+                  pod-template-hash=d86dd77f8
+Annotations:      cni.projectcalico.org/containerID: b9d709aa086dfb8101efd16c1ca22af854aabf12a1aa96a5212198c6579c06e4
+                  cni.projectcalico.org/podIP: 192.168.202.213/32
+                  cni.projectcalico.org/podIPs: 192.168.202.213/32
+Status:           Running
+SeccompProfile:   RuntimeDefault
+IP:               192.168.202.213
+IPs:
+  IP:           192.168.202.213
+Controlled By:  ReplicaSet/ui-d86dd77f8
+Containers:
+  ui:
+    Container ID:   containerd://5f55bc765cc0e1d9c303eb0d62b4bdf153483b888e3fe7c94e49bdae5f65984d
+    Image:          rahbar-ui:verified
+    Image ID:       sha256:4c72b9bf9cac81a47a2f21f9d2bfb5cde110f91e0f6d141b5658e7246406605b
+    Port:           8080/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Sun, 08 Nov 2026 00:01:44 +0500
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     200m
+      memory:  64Mi
+    Requests:
+      cpu:      25m
+      memory:   32Mi
+    Liveness:   http-get http://:8080/healthz delay=0s timeout=5s period=20s #success=1 #failure=3
+    Readiness:  http-get http://:8080/healthz delay=0s timeout=5s period=10s #success=1 #failure=3
+    Environment:
+      HOME:    /tmp
+      TMPDIR:  /tmp
+    Mounts:
+      /tmp from tmp (rw)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  tmp:
+    Type:        EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:      
+    SizeLimit:   256Mi
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                 node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+
+$ kubectl --context kind-rahbar-b -n rahbar logs -l app=indexer --all-containers=true --tail=100
+exit=0
+{"ts": "2026-11-07T19:02:15Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "stub", "collection": "rahbar_ci_fixtures", "chroma": "chroma:8000", "pod": "reindex-1794078133942982600-fzf26"}
+{"ts": "2026-11-07T19:02:15Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2023.md", "chunks": 6, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:02:15Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2023.md", "chunks": 6}
+{"ts": "2026-11-07T19:02:15Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2026.md", "chunks": 7, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:02:15Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2026.md", "chunks": 7}
+{"ts": "2026-11-07T19:02:15Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "fees-2026.md", "chunks": 3, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:02:15Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fees-2026.md", "chunks": 3}
+{"ts": "2026-11-07T19:02:15Z", "logger": "rahbar.indexer", "msg": "embedded", "embed_model": "stub", "embed_dim": 384, "embedding_backend": "stub", "chunks": 16}
+{"ts": "2026-11-07T19:02:15Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 1}
+{"ts": "2026-11-07T19:02:15Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 0}
+{"ts": "2026-11-07T19:02:16Z", "logger": "rahbar.indexer", "msg": "stored", "chunks": 16, "embed_model": "stub", "embed_dim": 384, "stale_deleted": 0, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:02:16Z", "logger": "rahbar.indexer", "msg": "pipeline_summary", "chunks": 16, "ocr_pages": 0, "storage_amplification": 1.0, "embed_model": "stub", "embed_dim": 384, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:02:16Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 16, "seconds": 0.9}
+{"ts": "2026-11-07T19:02:23Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "stub", "collection": "rahbar_ci_fixtures", "chroma": "chroma:8000", "pod": "reindex-1794078142416925100-6kswh"}
+{"ts": "2026-11-07T19:02:23Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2023.md", "chunks": 6, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:02:23Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2023.md", "chunks": 6}
+{"ts": "2026-11-07T19:02:23Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2026.md", "chunks": 7, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:02:23Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2026.md", "chunks": 7}
+{"ts": "2026-11-07T19:02:23Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "fees-2026.md", "chunks": 3, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:02:23Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fees-2026.md", "chunks": 3}
+{"ts": "2026-11-07T19:02:23Z", "logger": "rahbar.indexer", "msg": "embedded", "embed_model": "stub", "embed_dim": 384, "embedding_backend": "stub", "chunks": 16}
+{"ts": "2026-11-07T19:02:24Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 1}
+{"ts": "2026-11-07T19:02:24Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 0}
+{"ts": "2026-11-07T19:02:24Z", "logger": "rahbar.indexer", "msg": "stored", "chunks": 16, "embed_model": "stub", "embed_dim": 384, "stale_deleted": 0, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:02:24Z", "logger": "rahbar.indexer", "msg": "pipeline_summary", "chunks": 16, "ocr_pages": 0, "storage_amplification": 1.0, "embed_model": "stub", "embed_dim": 384, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:02:24Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 16, "seconds": 0.8}
+{"ts": "2026-11-07T19:18:32Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "stub", "collection": "rahbar_ci_fixtures", "chroma": "chroma:8000", "pod": "reindex-1794079111564438100-kzk6l"}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2023.md", "chunks": 6, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2023.md", "chunks": 6}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2026.md", "chunks": 7, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2026.md", "chunks": 7}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "fees-2026.md", "chunks": 3, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fees-2026.md", "chunks": 3}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "embedded", "embed_model": "stub", "embed_dim": 384, "embedding_backend": "stub", "chunks": 16}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 1}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 0}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "stored", "chunks": 16, "embed_model": "stub", "embed_dim": 384, "stale_deleted": 0, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "pipeline_summary", "chunks": 16, "ocr_pages": 0, "storage_amplification": 1.0, "embed_model": "stub", "embed_dim": 384, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:18:33Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 16, "seconds": 1.0}
+{"ts": "2026-11-07T19:19:34Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "stub", "collection": "rahbar_ci_fixtures", "chroma": "chroma:8000", "pod": "reindex-1794079173094924700-2vvmr"}
+{"ts": "2026-11-07T19:19:34Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2023.md", "chunks": 6, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:19:34Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2023.md", "chunks": 6}
+{"ts": "2026-11-07T19:19:34Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2026.md", "chunks": 7, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:19:34Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2026.md", "chunks": 7}
+{"ts": "2026-11-07T19:19:34Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "fees-2026.md", "chunks": 3, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:19:34Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fees-2026.md", "chunks": 3}
+{"ts": "2026-11-07T19:19:34Z", "logger": "rahbar.indexer", "msg": "embedded", "embed_model": "stub", "embed_dim": 384, "embedding_backend": "stub", "chunks": 16}
+{"ts": "2026-11-07T19:19:35Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 0}
+{"ts": "2026-11-07T19:19:35Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 0}
+{"ts": "2026-11-07T19:19:35Z", "logger": "rahbar.indexer", "msg": "stored", "chunks": 16, "embed_model": "stub", "embed_dim": 384, "stale_deleted": 0, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:19:35Z", "logger": "rahbar.indexer", "msg": "pipeline_summary", "chunks": 16, "ocr_pages": 0, "storage_amplification": 1.0, "embed_model": "stub", "embed_dim": 384, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:19:35Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 16, "seconds": 0.9}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "stub", "collection": "rahbar_ci_fixtures", "chroma": "chroma:8000", "pod": "reindex-1794079210873694300-z7sj7"}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2023.md", "chunks": 6, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2023.md", "chunks": 6}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2026.md", "chunks": 7, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2026.md", "chunks": 7}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "fees-2026.md", "chunks": 3, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fees-2026.md", "chunks": 3}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "embedded", "embed_model": "stub", "embed_dim": 384, "embedding_backend": "stub", "chunks": 16}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 1}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 0}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "stored", "chunks": 16, "embed_model": "stub", "embed_dim": 384, "stale_deleted": 0, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "pipeline_summary", "chunks": 16, "ocr_pages": 0, "storage_amplification": 1.0, "embed_model": "stub", "embed_dim": 384, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:20:12Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 16, "seconds": 0.9}
+{"ts": "2026-11-07T19:20:20Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "stub", "collection": "rahbar_ci_fixtures", "chroma": "chroma:8000", "pod": "reindex-1794079219298740300-4v4d6"}
+{"ts": "2026-11-07T19:20:20Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2023.md", "chunks": 6, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:20:20Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2023.md", "chunks": 6}
+{"ts": "2026-11-07T19:20:20Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2026.md", "chunks": 7, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:20:20Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2026.md", "chunks": 7}
+{"ts": "2026-11-07T19:20:20Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "fees-2026.md", "chunks": 3, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T19:20:20Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fees-2026.md", "chunks": 3}
+{"ts": "2026-11-07T19:20:20Z", "logger": "rahbar.indexer", "msg": "embedded", "embed_model": "stub", "embed_dim": 384, "embedding_backend": "stub", "chunks": 16}
+{"ts": "2026-11-07T19:20:21Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 1}
+{"ts": "2026-11-07T19:20:21Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 0}
+{"ts": "2026-11-07T19:20:21Z", "logger": "rahbar.indexer", "msg": "stored", "chunks": 16, "embed_model": "stub", "embed_dim": 384, "stale_deleted": 0, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:20:21Z", "logger": "rahbar.indexer", "msg": "pipeline_summary", "chunks": 16, "ocr_pages": 0, "storage_amplification": 1.0, "embed_model": "stub", "embed_dim": 384, "cache_invalidation": "success"}
+{"ts": "2026-11-07T19:20:21Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 16, "seconds": 0.9}
+{"ts": "2026-11-07T18:58:00Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "embed_model": "stub", "collection": "rahbar_ci_fixtures", "chroma": "chroma:8000", "pod": "indexer-6mrl8"}
+{"ts": "2026-11-07T18:58:00Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2023.md", "chunks": 6, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T18:58:00Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2023.md", "chunks": 6}
+{"ts": "2026-11-07T18:58:00Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "academic-rules-2026.md", "chunks": 7, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T18:58:00Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "academic-rules-2026.md", "chunks": 7}
+{"ts": "2026-11-07T18:58:00Z", "logger": "rahbar.indexer", "msg": "chunking_summary", "source": "fees-2026.md", "chunks": 3, "storage_amplification": 1.0, "size": 512, "overlap": 64, "strategy": "structure", "token_unit": "whitespace"}
+{"ts": "2026-11-07T18:58:00Z", "logger": "rahbar.indexer", "msg": "chunked", "source": "fees-2026.md", "chunks": 3}
+{"ts": "2026-11-07T18:58:00Z", "logger": "rahbar.indexer", "msg": "embedded", "embed_model": "stub", "embed_dim": 384, "embedding_backend": "stub", "chunks": 16}
+{"ts": "2026-11-07T18:58:01Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 0}
+{"ts": "2026-11-07T18:58:01Z", "logger": "rahbar.indexer", "msg": "cache_invalidated", "deleted": 0}
+{"ts": "2026-11-07T18:58:01Z", "logger": "rahbar.indexer", "msg": "stored", "chunks": 16, "embed_model": "stub", "embed_dim": 384, "stale_deleted": 0, "cache_invalidation": "success"}
+{"ts": "2026-11-07T18:58:01Z", "logger": "rahbar.indexer", "msg": "pipeline_summary", "chunks": 16, "ocr_pages": 0, "storage_amplification": 1.0, "embed_model": "stub", "embed_dim": 384, "cache_invalidation": "success"}
+{"ts": "2026-11-07T18:58:01Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 16, "seconds": 0.9}
+
+
+
+$ kubectl --context kind-rahbar-b -n rahbar logs -l app=api --all-containers=true --tail=100
+exit=0
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+{"ts": "2026-11-07T19:21:00Z", "level": "INFO", "logger": "rahbar.api", "msg": "api started", "request_id": "-", "retriever": "chroma", "llm_provider": "stub", "embed_model": "stub", "top_k": 5}
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+{"ts": "2026-11-07T19:20:55Z", "level": "INFO", "logger": "rahbar.api", "msg": "api started", "request_id": "-", "retriever": "chroma", "llm_provider": "stub", "embed_model": "stub", "top_k": 5}
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+{"ts": "2026-11-07T19:21:06Z", "level": "INFO", "logger": "rahbar.answer", "msg": "query_summary", "request_id": "6fdae21397af473ea9cf03d76ec1233a", "top_k": 5, "retrieved_chunk_ids": ["c1514febd6136f26cdc51bc22c11967d33e96df46163898196e5edda3c63af28", "c05a6400ad3c2ae26da5cb1b8d8c7c3b0fc9131fe43e8e6c4038094fcf8c8cdd", "5e8e9a91bf2c305bafd10b1a50f50c4eb156becab21855e6532d37a02b1e3db1", "08331b07e1e3254fe5bf0f9fcae7afeda90bb636e3cb1a2868b57b3b28566ee6", "9d924a34918376fc8e3064454c4f46ad65a695390297a2c251ac483f7a82a262"], "similarity_scores": [0.635, 0.5145, 0.1961, 0.1943, 0.1698], "cache_hit": true, "abstained": false}
+{"ts": "2026-11-07T19:21:06Z", "level": "INFO", "logger": "rahbar.api", "msg": "request", "request_id": "6fdae21397af473ea9cf03d76ec1233a", "path": "/api/ask", "status": 200, "ms": 9.2}
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+{"ts": "2026-11-07T19:21:04Z", "level": "INFO", "logger": "rahbar.api", "msg": "api started", "request_id": "-", "retriever": "chroma", "llm_provider": "stub", "embed_model": "stub", "top_k": 5}
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+

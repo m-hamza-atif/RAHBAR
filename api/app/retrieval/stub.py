@@ -42,5 +42,8 @@ _PASSAGES = [
 class StubRetriever:
     name = "stub"
 
-    def retrieve(self, question: str, k: int) -> list[Passage]:
+    def retrieve(self, question: str, k: int, embedding: list[float] | None = None) -> list[Passage]:
         return [p.model_copy() for p in _PASSAGES[:k]]
+
+    def snapshot(self) -> str:
+        return "stub-v1"

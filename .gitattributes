@@ -1,0 +1,2 @@
+# Shell entrypoints must work from Windows checkouts mounted in WSL.
+*.sh text eol=lf

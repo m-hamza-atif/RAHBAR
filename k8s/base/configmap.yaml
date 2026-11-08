@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rahbar-config
+  namespace: rahbar
+data:
+  RETRIEVER: chroma
+  LLM_PROVIDER: ollama-host
+  EMBED_MODEL: nomic-embed-text
+  EMBED_DIM: '768'
+  LLM_MODEL: llama3.2:3b
+  CHROMA_HOST: chroma
+  CHROMA_PORT: '8000'
+  CHROMA_COLLECTION: rahbar_policies
+  REDIS_HOST: redis
+  REDIS_PORT: '6379'
+  REDIS_FAKE: 'false'
+  CORPUS_DIR: /corpus
+  CHUNK_SIZE: '512'
+  CHUNK_OVERLAP: '64'
+  TOP_K: '5'
+  RELEVANCE_FLOOR: '0.35'
+  CACHE_THRESHOLD: '0.90'
+  # Low variance supports reproducible grounded wording; citation validation remains mandatory.
+  TEMPERATURE: '0.1'
+  OLLAMA_BASE_URL: http://host.minikube.internal:11434
+  ANONYMIZED_TELEMETRY: 'False'

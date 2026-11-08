@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: rahbar
+resources:
+- ../../base
+patches:
+- target:
+    kind: ConfigMap
+    name: rahbar-config
+  patch: '{"apiVersion":"v1","kind":"ConfigMap","metadata":{"name":"rahbar-config"},"data":{"LLM_PROVIDER":"stub","EMBED_MODEL":"stub","EMBED_DIM":"384","CHROMA_COLLECTION":"rahbar_ci_fixtures","CORPUS_DIR":"/fixtures","RELEVANCE_FLOOR":"0.15"}}'
+- target:
+    kind: Ingress
+    name: rahbar
+  patch: '[{"op":"replace","path":"/spec/ingressClassName","value":"traefik"}]'
+- target:
+    kind: NetworkPolicy
+    name: (api|ui)-ingress
+  patch: '[{"op":"replace","path":"/spec/ingress/0/from/0","value":{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"ingress-system"}},"podSelector":{"matchLabels":{"app":"traefik"}}}}]'
+- target:
+    kind: CronJob
+    name: reindex
+  patch: '[{"op":"replace","path":"/spec/suspend","value":true}]'

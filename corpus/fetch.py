@@ -31,6 +31,8 @@ from urllib.parse import quote, urljoin, urlsplit
 
 import httpx
 import yaml
+from pypdf import PdfReader
+from io import BytesIO
 
 HERE = Path(__file__).resolve().parent
 RAW = HERE / "raw"
@@ -89,7 +91,30 @@ def load_sources() -> list[dict]:
     for i, doc in enumerate(docs):
         if not doc.get("name") or not doc.get("url"):
             sys.exit(f"sources.yaml entry {i + 1} needs both name and url")
+        if type(doc.get("superseded", False)) is not bool:
+            sys.exit(f"sources.yaml entry {i + 1}: superseded must be a YAML boolean")
+    if len({slug(d['name']) for d in docs}) != len(docs):
+        sys.exit("source names must have unique filename slugs")
     return docs
+
+
+def inspect_content(content: bytes, extension: str) -> dict:
+    """Reject error pages disguised as PDFs and measure the actual document."""
+    if extension == ".pdf":
+        if not content.lstrip().startswith(b"%PDF-"):
+            raise ValueError("response is not a PDF")
+        reader = PdfReader(BytesIO(content), strict=False)
+        if not reader.pages:
+            raise ValueError("PDF has no pages")
+        empty = [i for i, page in enumerate(reader.pages, 1)
+                 if not (page.extract_text() or "").strip()]
+        return {"pages": len(reader.pages), "no_text_pages": empty}
+    if extension in {".html", ".htm"}:
+        text = content.decode("utf-8", errors="replace")
+        if not re.search(r"<(?:html|!doctype html)\b", text, re.I):
+            raise ValueError("response is not an HTML document")
+        return {"pages": 0, "no_text_pages": []}
+    raise ValueError(f"unsupported document format: {extension}")
 
 
 def fetch(force: bool) -> int:
@@ -105,10 +130,14 @@ def fetch(force: bool) -> int:
             name, url = doc["name"], normalise(doc["url"])
             old = previous.get(name)
             if old and not force and (RAW / old["file"]).exists() and old["url"] == url:
-                print(f"  have    {old['file']}")
-                entries.append({**old, "doc_version": doc.get("doc_version", "unknown"),
-                                "superseded": bool(doc.get("superseded", False))})
-                continue
+                content = (RAW / old["file"]).read_bytes()
+                if hashlib.sha256(content).hexdigest() == old["sha256"]:
+                    print(f"  have    {old['file']}")
+                    entries.append({**old, **inspect_content(content, Path(old['file']).suffix),
+                                    "doc_version": str(doc.get("doc_version", "unknown")),
+                                    "superseded": doc.get("superseded", False),
+                                    "properties": doc.get("properties", [])})
+                    continue
             print(f"  fetch   {name}")
             try:
                 response = get(client, url)
@@ -118,14 +147,19 @@ def fetch(force: bool) -> int:
                 if "drive.google.com" in url and "html" in content_type:
                     raise RuntimeError("Google Drive returned a web page, not the file "
                                        "(too large for direct download, or not shared publicly)")
-                file = slug(name) + guess_extension(url, content_type)
+                extension = (".pdf" if urlsplit(url).path.lower().endswith(".pdf")
+                             else guess_extension(url, content_type))
+                file = slug(name) + extension
+                measurements = inspect_content(response.content, Path(file).suffix)
                 (RAW / file).write_bytes(response.content)
                 entries.append({
                     "name": name, "url": url, "file": file, "bytes": len(response.content),
                     "sha256": hashlib.sha256(response.content).hexdigest(),
                     "content_type": content_type.split(";")[0],
                     "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                    "doc_version": doc.get("doc_version", "unknown"),
+                    **measurements,
+                    "properties": doc.get("properties", []),
+                    "doc_version": str(doc.get("doc_version", "unknown")),
                     "superseded": bool(doc.get("superseded", False)),
                 })
                 print(f"          {file}, {len(response.content):,} bytes")
@@ -153,12 +187,18 @@ def write_manifest(entries: list[dict]) -> None:
         "which is gitignored; run the script to download them, then `--verify` to check "
         "you have the same bytes.",
         "",
-        "| Document | Version | Superseded | File | Bytes | SHA-256 | URL |",
-        "| --- | --- | --- | --- | ---: | --- | --- |",
+        "HTML page count is 0 (not counted toward the 40 PDF page requirement).",
+        "Property 6 applies to the corpus as a whole: detailed Hostel & Transport Rules "
+        "are deliberately excluded. See `docs/CORPUS.md` for scope and evidence.",
+        "",
+        "| Document | Version | Superseded | File | Bytes | SHA-256 | URL | Pages | Properties |",
+        "| --- | --- | --- | --- | ---: | --- | --- | ---: | --- |",
     ]
     for e in entries:
         lines.append(f"| {e['name']} | {e['doc_version']} | {'yes' if e['superseded'] else 'no'} "
-                     f"| `{e['file']}` | {e['bytes']:,} | `{e['sha256']}` | <{e['url']}> |")
+                     f"| `{e['file']}` | {e['bytes']:,} | `{e['sha256']}` | <{e['url']}> "
+                     f"| {e['pages']} | {', '.join(map(str, e.get('properties', [])))} |")
+    lines.extend(["", f"Total: {len(entries)} documents; {sum(e['pages'] for e in entries)} PDF pages."])
     MANIFEST.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -167,6 +207,9 @@ def verify() -> int:
         sys.exit("no corpus/MANIFEST.md yet; run fetch first")
     rows = re.findall(r"\| `([^`]+)` \| [\d,]+ \| `([0-9a-f]{64})` \|", MANIFEST.read_text())
     bad = 0
+    if not rows:
+        print("No checksum rows in manifest; verification failed")
+        return 1
     for file, expected in rows:
         path = RAW / file
         if not path.exists():

@@ -1,0 +1,43 @@
+{
+  "recorded_at": "2026-11-08T09:46:16.914788+00:00",
+  "runtime": "Docker Desktop Linux container; not Kubernetes",
+  "image_id": "sha256:a3b6d5d4a60eec990e1e94c6b4723c73f90de3930bed86c70bc46d4427d4aa11",
+  "state": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-11-08T09:41:30.075044694Z",
+    "FinishedAt": "2026-11-08T09:45:24.684266305Z"
+  },
+  "memory_limit_bytes": 1610612736,
+  "nano_cpus": 1500000000,
+  "read_only_root": true,
+  "observed_cgroup_memory_peak_bytes_during_ocr": 258809856,
+  "memory_note": "Observed while OCR was active, not a final certified job peak; external Ollama memory excluded.",
+  "summaries": [
+    {
+      "ts": "2026-11-08T09:45:24Z",
+      "logger": "rahbar.indexer",
+      "msg": "pipeline_summary",
+      "chunks": 875,
+      "ocr_pages": 37,
+      "storage_amplification": 1.0128629294084908,
+      "embed_model": "nomic-embed-text",
+      "embed_dim": 768,
+      "cache_invalidation": "success"
+    },
+    {
+      "ts": "2026-11-08T09:45:24Z",
+      "logger": "rahbar.indexer",
+      "msg": "indexer finished",
+      "chunks": 875,
+      "seconds": 225.2
+    }
+  ]
+}

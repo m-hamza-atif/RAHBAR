@@ -1,0 +1,49 @@
+{
+  "recall_at_3": 0.8333333333333334,
+  "recall_at_5": 1.0,
+  "citation_validity": 1.0,
+  "citation_count": 6,
+  "valid_citation_count": 6,
+  "abstention_correctness": 1.0,
+  "must_abstain_count": 1,
+  "grounded_answer_rate": 1.0,
+  "by_type": {
+    "ordinary": {
+      "count": 1,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    },
+    "version_sensitive": {
+      "count": 3,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    },
+    "exact_term": {
+      "count": 1,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    },
+    "must_abstain": {
+      "count": 1,
+      "recall_at_3": null,
+      "recall_at_5": null
+    },
+    "prompt_injection": {
+      "count": 1,
+      "recall_at_3": 0.0,
+      "recall_at_5": 1.0
+    }
+  },
+  "golden": "eval/fixtures/golden.fixture.yaml",
+  "golden_sha256": "82771c774b32480a87b92c587c8d3b84be81dfccd440d5e89862435f0c176cd2",
+  "questions": 7,
+  "configuration": {
+    "profile": "CI stub fixtures",
+    "embed_model": "stub",
+    "embed_dim": 384,
+    "llm_provider": "stub",
+    "relevance_floor": 0.15,
+    "cache_threshold": 0.9,
+    "collection": "rahbar_ci_fixtures"
+  }
+}

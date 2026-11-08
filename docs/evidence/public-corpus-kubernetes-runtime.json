@@ -1,0 +1,361 @@
+{
+  "recorded_at": "2026-11-08T09:58:15.891521+00:00",
+  "context": "kind-rahbar-final-review",
+  "profile": "public corpus, real Windows Ollama",
+  "network_note": "This cluster was created before the CIDR fix. Its 192.168.0.0/16 pool overlapped the model host. A temporary node-only SNAT exception for destination 192.168.65.254 TCP/11434 restored model access. Fresh defaults use 10.244.0.0/16; no Windows listener/firewall modification.",
+  "observed_while_indexer_active": {
+    "kubectl_top": "indexer-m6b6h indexer 1427m 232Mi",
+    "memory_peak_bytes": 258969600,
+    "memory_current_bytes": 190967808,
+    "memory_max_bytes": 1610612736,
+    "note": "Live kernel high-water sample before completion, not a certified final job peak; external Ollama excluded."
+  },
+  "commands": [
+    {
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        ".artifacts/kubeconfig",
+        "--context",
+        "kind-rahbar-final-review",
+        "-n",
+        "rahbar",
+        "get",
+        "pods,jobs,pvc,hpa",
+        "-o",
+        "wide"
+      ],
+      "exit_code": 0,
+      "stdout": "NAME                         READY   STATUS      RESTARTS   AGE     IP                NODE                                NOMINATED NODE   READINESS GATES\npod/api-7465f594cb-dp648     1/1     Running     0          4m49s   192.168.223.146   rahbar-final-review-control-plane   <none>           <none>\npod/api-7465f594cb-jp84d     1/1     Running     0          4m49s   192.168.223.147   rahbar-final-review-control-plane   <none>           <none>\npod/api-7465f594cb-pssnm     1/1     Running     0          4m49s   192.168.223.145   rahbar-final-review-control-plane   <none>           <none>\npod/chroma-0                 1/1     Running     0          10m     192.168.223.136   rahbar-final-review-control-plane   <none>           <none>\npod/indexer-m6b6h            0/1     Completed   0          8m14s   192.168.223.142   rahbar-final-review-control-plane   <none>           <none>\npod/model-probe              0/1     Completed   0          7m10s   192.168.223.143   rahbar-final-review-control-plane   <none>           <none>\npod/redis-8474494f99-c8bmd   1/1     Running     0          10m     192.168.223.135   rahbar-final-review-control-plane   <none>           <none>\npod/ui-6458d96b79-zbkgt      1/1     Running     0          4m49s   192.168.223.148   rahbar-final-review-control-plane   <none>           <none>\n\nNAME                STATUS     COMPLETIONS   DURATION   AGE     CONTAINERS   IMAGES                        SELECTOR\njob.batch/indexer   Complete   1/1           3m24s      8m14s   indexer      rahbar-indexer:final-review   batch.kubernetes.io/controller-uid=ed861af1-59bb-4e1f-84ba-abfab81570c9\n\nNAME                                  STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE   VOLUMEMODE\npersistentvolumeclaim/corpus          Bound    pvc-0f5c04cc-ce43-47dd-8f25-730336074050   1Gi        RWO            standard       <unset>                 10m   Filesystem\npersistentvolumeclaim/data-chroma-0   Bound    pvc-58939500-3fd1-4ae3-88e1-3b048bf4d091   2Gi        RWO            standard       <unset>                 10m   Filesystem\npersistentvolumeclaim/redis-data      Bound    pvc-663b46ea-74ba-41f1-8c51-85e5743ea1a5   1Gi        RWO            standard       <unset>                 10m   Filesystem\n\nNAME                                      REFERENCE        TARGETS       MINPODS   MAXPODS   REPLICAS   AGE\nhorizontalpodautoscaler.autoscaling/api   Deployment/api   cpu: 4%/70%   3         8         3          4m49s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        ".artifacts/kubeconfig",
+        "--context",
+        "kind-rahbar-final-review",
+        "-n",
+        "rahbar",
+        "get",
+        "endpoints",
+        "api",
+        "-o",
+        "json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n    \"apiVersion\": \"v1\",\n    \"kind\": \"Endpoints\",\n    \"metadata\": {\n        \"annotations\": {\n            \"endpoints.kubernetes.io/last-change-trigger-time\": \"2026-11-08T09:53:34Z\"\n        },\n        \"creationTimestamp\": \"2026-11-08T09:47:48Z\",\n        \"name\": \"api\",\n        \"namespace\": \"rahbar\",\n        \"resourceVersion\": \"1879\",\n        \"uid\": \"46d203f1-52b6-466e-93da-0aa5d622f30c\"\n    },\n    \"subsets\": [\n        {\n            \"addresses\": [\n                {\n                    \"ip\": \"192.168.223.145\",\n                    \"nodeName\": \"rahbar-final-review-control-plane\",\n                    \"targetRef\": {\n                        \"kind\": \"Pod\",\n                        \"name\": \"api-7465f594cb-pssnm\",\n                        \"namespace\": \"rahbar\",\n                        \"uid\": \"c3e93755-c062-4e74-9f3b-6d306ab82517\"\n                    }\n                },\n                {\n                    \"ip\": \"192.168.223.146\",\n                    \"nodeName\": \"rahbar-final-review-control-plane\",\n                    \"targetRef\": {\n                        \"kind\": \"Pod\",\n                        \"name\": \"api-7465f594cb-dp648\",\n                        \"namespace\": \"rahbar\",\n                        \"uid\": \"9e9b18db-93f2-4e83-a3b2-ca5ac97629d7\"\n                    }\n                },\n                {\n                    \"ip\": \"192.168.223.147\",\n                    \"nodeName\": \"rahbar-final-review-control-plane\",\n                    \"targetRef\": {\n                        \"kind\": \"Pod\",\n                        \"name\": \"api-7465f594cb-jp84d\",\n                        \"namespace\": \"rahbar\",\n                        \"uid\": \"677db89f-937f-4404-90f3-b8624d7727e1\"\n                    }\n                }\n            ],\n            \"ports\": [\n                {\n                    \"name\": \"http\",\n                    \"port\": 8000,\n                    \"protocol\": \"TCP\"\n                }\n            ]\n        }\n    ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        ".artifacts/kubeconfig",
+        "--context",
+        "kind-rahbar-final-review",
+        "-n",
+        "rahbar",
+        "get",
+        "job",
+        "indexer",
+        "-o",
+        "json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n    \"apiVersion\": \"batch/v1\",\n    \"kind\": \"Job\",\n    \"metadata\": {\n        \"annotations\": {\n            \"kubectl.kubernetes.io/last-applied-configuration\": \"{\\\"apiVersion\\\":\\\"batch/v1\\\",\\\"kind\\\":\\\"Job\\\",\\\"metadata\\\":{\\\"annotations\\\":{},\\\"name\\\":\\\"indexer\\\",\\\"namespace\\\":\\\"rahbar\\\"},\\\"spec\\\":{\\\"activeDeadlineSeconds\\\":1800,\\\"backoffLimit\\\":3,\\\"template\\\":{\\\"metadata\\\":{\\\"labels\\\":{\\\"app\\\":\\\"indexer\\\"}},\\\"spec\\\":{\\\"automountServiceAccountToken\\\":false,\\\"containers\\\":[{\\\"env\\\":[{\\\"name\\\":\\\"HOME\\\",\\\"value\\\":\\\"/tmp\\\"},{\\\"name\\\":\\\"TMPDIR\\\",\\\"value\\\":\\\"/tmp\\\"}],\\\"envFrom\\\":[{\\\"configMapRef\\\":{\\\"name\\\":\\\"rahbar-config\\\"}}],\\\"image\\\":\\\"rahbar-indexer:final-review\\\",\\\"imagePullPolicy\\\":\\\"IfNotPresent\\\",\\\"name\\\":\\\"indexer\\\",\\\"resources\\\":{\\\"limits\\\":{\\\"cpu\\\":\\\"1500m\\\",\\\"memory\\\":\\\"1536Mi\\\"},\\\"requests\\\":{\\\"cpu\\\":\\\"250m\\\",\\\"memory\\\":\\\"512Mi\\\"}},\\\"securityContext\\\":{\\\"allowPrivilegeEscalation\\\":false,\\\"capabilities\\\":{\\\"drop\\\":[\\\"ALL\\\"]},\\\"readOnlyRootFilesystem\\\":true,\\\"runAsNonRoot\\\":true},\\\"volumeMounts\\\":[{\\\"mountPath\\\":\\\"/tmp\\\",\\\"name\\\":\\\"tmp\\\"},{\\\"mountPath\\\":\\\"/corpus\\\",\\\"name\\\":\\\"corpus\\\",\\\"readOnly\\\":true}]}],\\\"enableServiceLinks\\\":false,\\\"restartPolicy\\\":\\\"OnFailure\\\",\\\"securityContext\\\":{\\\"fsGroup\\\":10001,\\\"runAsGroup\\\":10001,\\\"runAsNonRoot\\\":true,\\\"runAsUser\\\":10001,\\\"seccompProfile\\\":{\\\"type\\\":\\\"RuntimeDefault\\\"}},\\\"serviceAccountName\\\":\\\"indexer\\\",\\\"terminationGracePeriodSeconds\\\":30,\\\"volumes\\\":[{\\\"emptyDir\\\":{\\\"sizeLimit\\\":\\\"256Mi\\\"},\\\"name\\\":\\\"tmp\\\"},{\\\"name\\\":\\\"corpus\\\",\\\"persistentVolumeClaim\\\":{\\\"claimName\\\":\\\"corpus\\\"}}]}}}}\\n\"\n        },\n        \"creationTimestamp\": \"2026-11-08T09:50:02Z\",\n        \"generation\": 1,\n        \"labels\": {\n            \"app\": \"indexer\",\n            \"batch.kubernetes.io/controller-uid\": \"ed861af1-59bb-4e1f-84ba-abfab81570c9\",\n            \"batch.kubernetes.io/job-name\": \"indexer\",\n            \"controller-uid\": \"ed861af1-59bb-4e1f-84ba-abfab81570c9\",\n            \"job-name\": \"indexer\"\n        },\n        \"name\": \"indexer\",\n        \"namespace\": \"rahbar\",\n        \"resourceVersion\": \"1755\",\n        \"uid\": \"ed861af1-59bb-4e1f-84ba-abfab81570c9\"\n    },\n    \"spec\": {\n        \"activeDeadlineSeconds\": 1800,\n        \"backoffLimit\": 3,\n        \"completionMode\": \"NonIndexed\",\n        \"completions\": 1,\n        \"manualSelector\": false,\n        \"parallelism\": 1,\n        \"podReplacementPolicy\": \"TerminatingOrFailed\",\n        \"selector\": {\n            \"matchLabels\": {\n                \"batch.kubernetes.io/controller-uid\": \"ed861af1-59bb-4e1f-84ba-abfab81570c9\"\n            }\n        },\n        \"suspend\": false,\n        \"template\": {\n            \"metadata\": {\n                \"creationTimestamp\": null,\n                \"labels\": {\n                    \"app\": \"indexer\",\n                    \"batch.kubernetes.io/controller-uid\": \"ed861af1-59bb-4e1f-84ba-abfab81570c9\",\n                    \"batch.kubernetes.io/job-name\": \"indexer\",\n                    \"controller-uid\": \"ed861af1-59bb-4e1f-84ba-abfab81570c9\",\n                    \"job-name\": \"indexer\"\n                }\n            },\n            \"spec\": {\n                \"automountServiceAccountToken\": false,\n                \"containers\": [\n                    {\n                        \"env\": [\n                            {\n                                \"name\": \"HOME\",\n                                \"value\": \"/tmp\"\n                            },\n                            {\n                                \"name\": \"TMPDIR\",\n                                \"value\": \"/tmp\"\n                            }\n                        ],\n                        \"envFrom\": [\n                            {\n                                \"configMapRef\": {\n                                    \"name\": \"rahbar-config\"\n                                }\n                            }\n                        ],\n                        \"image\": \"rahbar-indexer:final-review\",\n                        \"imagePullPolicy\": \"IfNotPresent\",\n                        \"name\": \"indexer\",\n                        \"resources\": {\n                            \"limits\": {\n                                \"cpu\": \"1500m\",\n                                \"memory\": \"1536Mi\"\n                            },\n                            \"requests\": {\n                                \"cpu\": \"250m\",\n                                \"memory\": \"512Mi\"\n                            }\n                        },\n                        \"securityContext\": {\n                            \"allowPrivilegeEscalation\": false,\n                            \"capabilities\": {\n                                \"drop\": [\n                                    \"ALL\"\n                                ]\n                            },\n                            \"readOnlyRootFilesystem\": true,\n                            \"runAsNonRoot\": true\n                        },\n                        \"terminationMessagePath\": \"/dev/termination-log\",\n                        \"terminationMessagePolicy\": \"File\",\n                        \"volumeMounts\": [\n                            {\n                                \"mountPath\": \"/tmp\",\n                                \"name\": \"tmp\"\n                            },\n                            {\n                                \"mountPath\": \"/corpus\",\n                                \"name\": \"corpus\",\n                                \"readOnly\": true\n                            }\n                        ]\n                    }\n                ],\n                \"dnsPolicy\": \"ClusterFirst\",\n                \"enableServiceLinks\": false,\n                \"restartPolicy\": \"OnFailure\",\n                \"schedulerName\": \"default-scheduler\",\n                \"securityContext\": {\n                    \"fsGroup\": 10001,\n                    \"runAsGroup\": 10001,\n                    \"runAsNonRoot\": true,\n                    \"runAsUser\": 10001,\n                    \"seccompProfile\": {\n                        \"type\": \"RuntimeDefault\"\n                    }\n                },\n                \"serviceAccount\": \"indexer\",\n                \"serviceAccountName\": \"indexer\",\n                \"terminationGracePeriodSeconds\": 30,\n                \"volumes\": [\n                    {\n                        \"emptyDir\": {\n                            \"sizeLimit\": \"256Mi\"\n                        },\n                        \"name\": \"tmp\"\n                    },\n                    {\n                        \"name\": \"corpus\",\n                        \"persistentVolumeClaim\": {\n                            \"claimName\": \"corpus\"\n                        }\n                    }\n                ]\n            }\n        }\n    },\n    \"status\": {\n        \"completionTime\": \"2026-11-08T09:53:26Z\",\n        \"conditions\": [\n            {\n                \"lastProbeTime\": \"2026-11-08T09:53:26Z\",\n                \"lastTransitionTime\": \"2026-11-08T09:53:26Z\",\n                \"message\": \"Reached expected number of succeeded pods\",\n                \"reason\": \"CompletionsReached\",\n                \"status\": \"True\",\n                \"type\": \"SuccessCriteriaMet\"\n            },\n            {\n                \"lastProbeTime\": \"2026-11-08T09:53:26Z\",\n                \"lastTransitionTime\": \"2026-11-08T09:53:26Z\",\n                \"message\": \"Reached expected number of succeeded pods\",\n                \"reason\": \"CompletionsReached\",\n                \"status\": \"True\",\n                \"type\": \"Complete\"\n            }\n        ],\n        \"ready\": 0,\n        \"startTime\": \"2026-11-08T09:50:02Z\",\n        \"succeeded\": 1,\n        \"terminating\": 0,\n        \"uncountedTerminatedPods\": {}\n    }\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        ".artifacts/kubeconfig",
+        "--context",
+        "kind-rahbar-final-review",
+        "-n",
+        "rahbar",
+        "logs",
+        "job/indexer"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"ts\": \"2026-11-08T09:50:03Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"indexer starting\", \"dummy\": false, \"embed_model\": \"nomic-embed-text\", \"collection\": \"rahbar_policies\", \"chroma\": \"chroma:8000\", \"pod\": \"indexer-m6b6h\"}\n{\"ts\": \"2026-11-08T09:50:06Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 2, \"chars\": 257}\n{\"ts\": \"2026-11-08T09:50:06Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 3, \"chars\": 0}\n{\"ts\": \"2026-11-08T09:50:15Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 4, \"chars\": 2210}\n{\"ts\": \"2026-11-08T09:50:20Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 5, \"chars\": 1408}\n{\"ts\": \"2026-11-08T09:50:27Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 6, \"chars\": 1490}\n{\"ts\": \"2026-11-08T09:50:33Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 7, \"chars\": 1876}\n{\"ts\": \"2026-11-08T09:50:37Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 8, \"chars\": 996}\n{\"ts\": \"2026-11-08T09:50:39Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 9, \"chars\": 727}\n{\"ts\": \"2026-11-08T09:50:43Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 10, \"chars\": 1206}\n{\"ts\": \"2026-11-08T09:50:50Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 11, \"chars\": 1858}\n{\"ts\": \"2026-11-08T09:50:58Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 12, \"chars\": 1862}\n{\"ts\": \"2026-11-08T09:51:02Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 13, \"chars\": 917}\n{\"ts\": \"2026-11-08T09:51:07Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 14, \"chars\": 1718}\n{\"ts\": \"2026-11-08T09:51:14Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 15, \"chars\": 1791}\n{\"ts\": \"2026-11-08T09:51:19Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 16, \"chars\": 1648}\n{\"ts\": \"2026-11-08T09:51:25Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 17, \"chars\": 1677}\n{\"ts\": \"2026-11-08T09:51:33Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 18, \"chars\": 1783}\n{\"ts\": \"2026-11-08T09:51:37Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 19, \"chars\": 1073}\n{\"ts\": \"2026-11-08T09:51:42Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 20, \"chars\": 1794}\n{\"ts\": \"2026-11-08T09:51:49Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 21, \"chars\": 1666}\n{\"ts\": \"2026-11-08T09:51:52Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 22, \"chars\": 923}\n{\"ts\": \"2026-11-08T09:51:59Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 23, \"chars\": 1863}\n{\"ts\": \"2026-11-08T09:52:06Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 24, \"chars\": 1850}\n{\"ts\": \"2026-11-08T09:52:07Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"page\": 25, \"chars\": 527}\n{\"ts\": \"2026-11-08T09:52:08Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunking_summary\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"chunks\": 180, \"storage_amplification\": 1.0, \"size\": 512, \"overlap\": 64, \"strategy\": \"structure\", \"token_unit\": \"whitespace\"}\n{\"ts\": \"2026-11-08T09:52:08Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunked\", \"source\": \"undergraduate-academic-rules-aug-2023.pdf\", \"chunks\": 180}\n{\"ts\": \"2026-11-08T09:52:09Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"academic-rules-handbook-jun-2026.pdf\", \"page\": 1, \"chars\": 156}\n{\"ts\": \"2026-11-08T09:52:10Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"academic-rules-handbook-jun-2026.pdf\", \"page\": 2, \"chars\": 0}\n{\"ts\": \"2026-11-08T09:52:13Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"academic-rules-handbook-jun-2026.pdf\", \"page\": 56, \"chars\": 0}\n{\"ts\": \"2026-11-08T09:52:13Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"academic-rules-handbook-jun-2026.pdf\", \"page\": 57, \"chars\": 0}\n{\"ts\": \"2026-11-08T09:52:18Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"academic-rules-handbook-jun-2026.pdf\", \"page\": 58, \"chars\": 777}\n{\"ts\": \"2026-11-08T09:52:18Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunking_summary\", \"source\": \"academic-rules-handbook-jun-2026.pdf\", \"chunks\": 225, \"storage_amplification\": 1.0, \"size\": 512, \"overlap\": 64, \"strategy\": \"structure\", \"token_unit\": \"whitespace\"}\n{\"ts\": \"2026-11-08T09:52:18Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunked\", \"source\": \"academic-rules-handbook-jun-2026.pdf\", \"chunks\": 225}\n{\"ts\": \"2026-11-08T09:52:19Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunking_summary\", \"source\": \"prospectus-2026-academic-rules-and-regulations.pdf\", \"chunks\": 18, \"storage_amplification\": 1.0539780714084903, \"size\": 512, \"overlap\": 64, \"strategy\": \"structure\", \"token_unit\": \"whitespace\"}\n{\"ts\": \"2026-11-08T09:52:19Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunked\", \"source\": \"prospectus-2026-academic-rules-and-regulations.pdf\", \"chunks\": 18}\n{\"ts\": \"2026-11-08T09:52:22Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunking_summary\", \"source\": \"annual-report-2019-20.pdf\", \"chunks\": 109, \"storage_amplification\": 1.012609595113782, \"size\": 512, \"overlap\": 64, \"strategy\": \"structure\", \"token_unit\": \"whitespace\"}\n{\"ts\": \"2026-11-08T09:52:22Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunked\", \"source\": \"annual-report-2019-20.pdf\", \"chunks\": 109}\n{\"ts\": \"2026-11-08T09:52:31Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunking_summary\", \"source\": \"annual-report-2023-24.pdf\", \"chunks\": 258, \"storage_amplification\": 1.0155113911778963, \"size\": 512, \"overlap\": 64, \"strategy\": \"structure\", \"token_unit\": \"whitespace\"}\n{\"ts\": \"2026-11-08T09:52:31Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunked\", \"source\": \"annual-report-2023-24.pdf\", \"chunks\": 258}\n{\"ts\": \"2026-11-08T09:52:31Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunking_summary\", \"source\": \"fee-structure-page.html\", \"chunks\": 8, \"storage_amplification\": 1.0, \"size\": 512, \"overlap\": 64, \"strategy\": \"structure\", \"token_unit\": \"whitespace\"}\n{\"ts\": \"2026-11-08T09:52:31Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunked\", \"source\": \"fee-structure-page.html\", \"chunks\": 8}\n{\"ts\": \"2026-11-08T09:52:31Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunking_summary\", \"source\": \"grading-page.html\", \"chunks\": 6, \"storage_amplification\": 1.0, \"size\": 512, \"overlap\": 64, \"strategy\": \"structure\", \"token_unit\": \"whitespace\"}\n{\"ts\": \"2026-11-08T09:52:31Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunked\", \"source\": \"grading-page.html\", \"chunks\": 6}\n{\"ts\": \"2026-11-08T09:52:38Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"faculty-entrepreneurship-and-technical-start-ups-policy.pdf\", \"page\": 1, \"chars\": 2783}\n{\"ts\": \"2026-11-08T09:52:42Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"faculty-entrepreneurship-and-technical-start-ups-policy.pdf\", \"page\": 2, \"chars\": 2651}\n{\"ts\": \"2026-11-08T09:52:46Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"faculty-entrepreneurship-and-technical-start-ups-policy.pdf\", \"page\": 3, \"chars\": 1785}\n{\"ts\": \"2026-11-08T09:52:48Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"faculty-entrepreneurship-and-technical-start-ups-policy.pdf\", \"page\": 4, \"chars\": 788}\n{\"ts\": \"2026-11-08T09:52:50Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"faculty-entrepreneurship-and-technical-start-ups-policy.pdf\", \"page\": 5, \"chars\": 1062}\n{\"ts\": \"2026-11-08T09:52:53Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"faculty-entrepreneurship-and-technical-start-ups-policy.pdf\", \"page\": 6, \"chars\": 1742}\n{\"ts\": \"2026-11-08T09:52:54Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"faculty-entrepreneurship-and-technical-start-ups-policy.pdf\", \"page\": 7, \"chars\": 526}\n{\"ts\": \"2026-11-08T09:52:55Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"ocr_page\", \"source\": \"faculty-entrepreneurship-and-technical-start-ups-policy.pdf\", \"page\": 8, \"chars\": 375}\n{\"ts\": \"2026-11-08T09:52:55Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunking_summary\", \"source\": \"faculty-entrepreneurship-and-technical-start-ups-policy.pdf\", \"chunks\": 71, \"storage_amplification\": 1.0, \"size\": 512, \"overlap\": 64, \"strategy\": \"structure\", \"token_unit\": \"whitespace\"}\n{\"ts\": \"2026-11-08T09:52:55Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"chunked\", \"source\": \"faculty-entrepreneurship-and-technical-start-ups-policy.pdf\", \"chunks\": 71}\n{\"ts\": \"2026-11-08T09:53:21Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"embedded\", \"embed_model\": \"nomic-embed-text\", \"embed_dim\": 768, \"embedding_backend\": \"ollama\", \"chunks\": 875}\n{\"ts\": \"2026-11-08T09:53:22Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"cache_invalidated\", \"deleted\": 0}\n{\"ts\": \"2026-11-08T09:53:23Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"cache_invalidated\", \"deleted\": 0}\n{\"ts\": \"2026-11-08T09:53:23Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"stored\", \"chunks\": 875, \"embed_model\": \"nomic-embed-text\", \"embed_dim\": 768, \"stale_deleted\": 0, \"cache_invalidation\": \"success\"}\n{\"ts\": \"2026-11-08T09:53:23Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"pipeline_summary\", \"chunks\": 875, \"ocr_pages\": 37, \"storage_amplification\": 1.0128629294084908, \"embed_model\": \"nomic-embed-text\", \"embed_dim\": 768, \"cache_invalidation\": \"success\"}\n{\"ts\": \"2026-11-08T09:53:23Z\", \"logger\": \"rahbar.indexer\", \"msg\": \"indexer finished\", \"chunks\": 875, \"seconds\": 193.7}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        ".artifacts/kubeconfig",
+        "--context",
+        "kind-rahbar-final-review",
+        "-n",
+        "rahbar",
+        "top",
+        "pods"
+      ],
+      "exit_code": 0,
+      "stdout": "NAME                     CPU(cores)   MEMORY(bytes)   \napi-7465f594cb-dp648     4m           75Mi            \napi-7465f594cb-jp84d     4m           73Mi            \napi-7465f594cb-pssnm     4m           74Mi            \nchroma-0                 2m           62Mi            \nredis-8474494f99-c8bmd   12m          3Mi             \nui-6458d96b79-zbkgt      1m           8Mi             \n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        ".artifacts/kubeconfig",
+        "--context",
+        "kind-rahbar-final-review",
+        "-n",
+        "rahbar",
+        "logs",
+        "model-probe"
+      ],
+      "exit_code": 0,
+      "stdout": "200 {\"models\":[{\"name\":\"llama3.2:3b\",\"model\":\"llama3.2:3b\",\"modified_at\":\"2026-11-07T18:57:02.5579582+05:00\",\"size\":2019393189,\"digest\":\"a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72\",\"details\":{\"parent_model\":\"\",\"format\":\"gguf\",\"family\":\"llama\",\"families\":[\"llama\"],\"parameter_size\":\"3.2B\",\"quantization_level\":\"Q4_K_M\",\"context_length\":131072,\"embedding_length\":3072,\"runner\":\"ggml\"},\"capabilities\":[\"completion\",\"tools\"]},{\"name\":\"nomic-embed-text:latest\",\"model\":\"nomic-embed-text:latest\",\"modified_at\":\"2026-11-07T18:23:23.0169501+05:00\",\"size\":274302450,\"digest\":\"0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f\",\"details\":{\"parent_model\":\"\",\"format\":\"gguf\",\"family\":\"nomic-bert\",\"families\":[\"nomic-bert\"],\"parameter_size\":\"137M\",\"quantization_level\":\"F16\",\"context_length\":2048,\"embedding_length\":768,\"runner\":\"ggml\"},\"capabilities\":[\"embedding\"]}]}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        ".artifacts/kubeconfig",
+        "--context",
+        "kind-rahbar-final-review",
+        "-n",
+        "rahbar",
+        "get",
+        "hpa",
+        "api",
+        "-o",
+        "json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n    \"apiVersion\": \"autoscaling/v2\",\n    \"kind\": \"HorizontalPodAutoscaler\",\n    \"metadata\": {\n        \"annotations\": {\n            \"kubectl.kubernetes.io/last-applied-configuration\": \"{\\\"apiVersion\\\":\\\"autoscaling/v2\\\",\\\"kind\\\":\\\"HorizontalPodAutoscaler\\\",\\\"metadata\\\":{\\\"annotations\\\":{},\\\"name\\\":\\\"api\\\",\\\"namespace\\\":\\\"rahbar\\\"},\\\"spec\\\":{\\\"maxReplicas\\\":8,\\\"metrics\\\":[{\\\"resource\\\":{\\\"name\\\":\\\"cpu\\\",\\\"target\\\":{\\\"averageUtilization\\\":70,\\\"type\\\":\\\"Utilization\\\"}},\\\"type\\\":\\\"Resource\\\"}],\\\"minReplicas\\\":3,\\\"scaleTargetRef\\\":{\\\"apiVersion\\\":\\\"apps/v1\\\",\\\"kind\\\":\\\"Deployment\\\",\\\"name\\\":\\\"api\\\"}}}\\n\"\n        },\n        \"creationTimestamp\": \"2026-11-08T09:53:27Z\",\n        \"name\": \"api\",\n        \"namespace\": \"rahbar\",\n        \"resourceVersion\": \"2238\",\n        \"uid\": \"2a15af62-2be5-445b-98d6-82f6ce9ee118\"\n    },\n    \"spec\": {\n        \"maxReplicas\": 8,\n        \"metrics\": [\n            {\n                \"resource\": {\n                    \"name\": \"cpu\",\n                    \"target\": {\n                        \"averageUtilization\": 70,\n                        \"type\": \"Utilization\"\n                    }\n                },\n                \"type\": \"Resource\"\n            }\n        ],\n        \"minReplicas\": 3,\n        \"scaleTargetRef\": {\n            \"apiVersion\": \"apps/v1\",\n            \"kind\": \"Deployment\",\n            \"name\": \"api\"\n        }\n    },\n    \"status\": {\n        \"conditions\": [\n            {\n                \"lastTransitionTime\": \"2026-11-08T09:53:43Z\",\n                \"message\": \"recent recommendations were higher than current one, applying the highest recent recommendation\",\n                \"reason\": \"ScaleDownStabilized\",\n                \"status\": \"True\",\n                \"type\": \"AbleToScale\"\n            },\n            {\n                \"lastTransitionTime\": \"2026-11-08T09:54:14Z\",\n                \"message\": \"the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)\",\n                \"reason\": \"ValidMetricFound\",\n                \"status\": \"True\",\n                \"type\": \"ScalingActive\"\n            },\n            {\n                \"lastTransitionTime\": \"2026-11-08T09:54:14Z\",\n                \"message\": \"the desired count is within the acceptable range\",\n                \"reason\": \"DesiredWithinRange\",\n                \"status\": \"False\",\n                \"type\": \"ScalingLimited\"\n            }\n        ],\n        \"currentMetrics\": [\n            {\n                \"resource\": {\n                    \"current\": {\n                        \"averageUtilization\": 4,\n                        \"averageValue\": \"4m\"\n                    },\n                    \"name\": \"cpu\"\n                },\n                \"type\": \"Resource\"\n            }\n        ],\n        \"currentReplicas\": 3,\n        \"desiredReplicas\": 3\n    }\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        ".artifacts/kubeconfig",
+        "--context",
+        "kind-rahbar-final-review",
+        "-n",
+        "rahbar",
+        "get",
+        "configmap",
+        "rahbar-config",
+        "-o",
+        "json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n    \"apiVersion\": \"v1\",\n    \"data\": {\n        \"ANONYMIZED_TELEMETRY\": \"False\",\n        \"CACHE_THRESHOLD\": \"0.90\",\n        \"CHROMA_COLLECTION\": \"rahbar_policies\",\n        \"CHROMA_HOST\": \"chroma\",\n        \"CHROMA_PORT\": \"8000\",\n        \"CHUNK_OVERLAP\": \"64\",\n        \"CHUNK_SIZE\": \"512\",\n        \"CORPUS_DIR\": \"/corpus\",\n        \"EMBED_DIM\": \"768\",\n        \"EMBED_MODEL\": \"nomic-embed-text\",\n        \"LLM_MODEL\": \"llama3.2:3b\",\n        \"LLM_PROVIDER\": \"ollama-host\",\n        \"OLLAMA_BASE_URL\": \"http://192.168.65.254:11434\",\n        \"REDIS_FAKE\": \"false\",\n        \"REDIS_HOST\": \"redis\",\n        \"REDIS_PORT\": \"6379\",\n        \"RELEVANCE_FLOOR\": \"0.35\",\n        \"RETRIEVER\": \"chroma\",\n        \"TEMPERATURE\": \"0.1\",\n        \"TOP_K\": \"5\"\n    },\n    \"kind\": \"ConfigMap\",\n    \"metadata\": {\n        \"annotations\": {\n            \"kubectl.kubernetes.io/last-applied-configuration\": \"{\\\"apiVersion\\\":\\\"v1\\\",\\\"data\\\":{\\\"ANONYMIZED_TELEMETRY\\\":\\\"False\\\",\\\"CACHE_THRESHOLD\\\":\\\"0.90\\\",\\\"CHROMA_COLLECTION\\\":\\\"rahbar_policies\\\",\\\"CHROMA_HOST\\\":\\\"chroma\\\",\\\"CHROMA_PORT\\\":\\\"8000\\\",\\\"CHUNK_OVERLAP\\\":\\\"64\\\",\\\"CHUNK_SIZE\\\":\\\"512\\\",\\\"CORPUS_DIR\\\":\\\"/corpus\\\",\\\"EMBED_DIM\\\":\\\"768\\\",\\\"EMBED_MODEL\\\":\\\"nomic-embed-text\\\",\\\"LLM_MODEL\\\":\\\"llama3.2:3b\\\",\\\"LLM_PROVIDER\\\":\\\"ollama-host\\\",\\\"OLLAMA_BASE_URL\\\":\\\"http://192.168.65.254:11434\\\",\\\"REDIS_FAKE\\\":\\\"false\\\",\\\"REDIS_HOST\\\":\\\"redis\\\",\\\"REDIS_PORT\\\":\\\"6379\\\",\\\"RELEVANCE_FLOOR\\\":\\\"0.35\\\",\\\"RETRIEVER\\\":\\\"chroma\\\",\\\"TEMPERATURE\\\":\\\"0.1\\\",\\\"TOP_K\\\":\\\"5\\\"},\\\"kind\\\":\\\"ConfigMap\\\",\\\"metadata\\\":{\\\"annotations\\\":{},\\\"name\\\":\\\"rahbar-config\\\",\\\"namespace\\\":\\\"rahbar\\\"}}\\n\"\n        },\n        \"creationTimestamp\": \"2026-11-08T09:47:48Z\",\n        \"name\": \"rahbar-config\",\n        \"namespace\": \"rahbar\",\n        \"resourceVersion\": \"882\",\n        \"uid\": \"6fde9ce5-8bed-43ec-b23c-b012cbcfbc3f\"\n    }\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        ".artifacts/kubeconfig",
+        "--context",
+        "kind-rahbar-final-review",
+        "-n",
+        "rahbar",
+        "get",
+        "networkpolicy",
+        "model-egress",
+        "-o",
+        "yaml"
+      ],
+      "exit_code": 0,
+      "stdout": "apiVersion: networking.k8s.io/v1\nkind: NetworkPolicy\nmetadata:\n  annotations:\n    kubectl.kubernetes.io/last-applied-configuration: |\n      {\"apiVersion\":\"networking.k8s.io/v1\",\"kind\":\"NetworkPolicy\",\"metadata\":{\"annotations\":{},\"name\":\"model-egress\",\"namespace\":\"rahbar\"},\"spec\":{\"egress\":[{\"ports\":[{\"port\":11434,\"protocol\":\"TCP\"}],\"to\":[{\"ipBlock\":{\"cidr\":\"192.168.65.254/32\"}}]}],\"podSelector\":{\"matchExpressions\":[{\"key\":\"app\",\"operator\":\"In\",\"values\":[\"api\",\"indexer\"]}]},\"policyTypes\":[\"Egress\"]}}\n  creationTimestamp: \"2026-11-08T09:47:48Z\"\n  generation: 1\n  name: model-egress\n  namespace: rahbar\n  resourceVersion: \"937\"\n  uid: 38f5f8b4-d36f-4002-b9a8-f369911e4e04\nspec:\n  egress:\n  - ports:\n    - port: 11434\n      protocol: TCP\n    to:\n    - ipBlock:\n        cidr: 192.168.65.254/32\n  podSelector:\n    matchExpressions:\n    - key: app\n      operator: In\n      values:\n      - api\n      - indexer\n  policyTypes:\n  - Egress\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        ".artifacts/kubeconfig",
+        "--context",
+        "kind-rahbar-final-review",
+        "-n",
+        "rahbar",
+        "exec",
+        "deployment/ui",
+        "--",
+        "wget",
+        "-T",
+        "3",
+        "-O",
+        "-",
+        "http://redis:6379"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Connecting to redis:6379 (10.96.143.211:6379)\nwget: download timed out\ncommand terminated with exit code 1\n"
+    },
+    {
+      "command": [
+        "kubectl",
+        "--kubeconfig",
+        ".artifacts/kubeconfig",
+        "--context",
+        "kind-rahbar-final-review",
+        "-n",
+        "rahbar",
+        "exec",
+        "deployment/ui",
+        "--",
+        "wget",
+        "-T",
+        "3",
+        "-O",
+        "-",
+        "http://192.168.65.254:11434"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Connecting to 192.168.65.254:11434 (192.168.65.254:11434)\nwget: download timed out\ncommand terminated with exit code 1\n"
+    }
+  ],
+  "readyz": {
+    "status": "ready",
+    "checks": {
+      "chroma": "ok",
+      "redis": "ok"
+    },
+    "index_revision": "1781d8da0d804047a02accd9b4b0591f",
+    "configuration": {
+      "retriever": "chroma",
+      "llm_provider": "ollama-host",
+      "llm_model": "llama3.2:3b",
+      "embed_model": "nomic-embed-text",
+      "embed_dim": 768,
+      "collection": "rahbar_policies",
+      "top_k": 5,
+      "relevance_floor": 0.35,
+      "cache_threshold": 0.9
+    }
+  },
+  "ui_status": 200,
+  "shared_redis_cache": {
+    "question": "What minimum CGPA must an undergraduate maintain to avoid academic warning?",
+    "responses": [
+      {
+        "request_id": "55d744bfe1fe40a0a73f8deedfcbaa26",
+        "answer": "2.00",
+        "citations": [
+          {
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 5.4",
+            "page": 24
+          },
+          {
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 1.25",
+            "page": 10
+          }
+        ],
+        "answered_from_context": true,
+        "confidence": "high",
+        "retrieved": [
+          {
+            "chunk_id": "67e31c0dbe4d3574b6da2ef721bc16669b2fa8df9e6ed16021efab3a2be979bd",
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 5.4",
+            "page": 24,
+            "score": 0.87678754
+          },
+          {
+            "chunk_id": "91e87ddba3290e98530d390ce08a6e02279040b3093bc2f30b2005c02f6b2813",
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 1.25",
+            "page": 10,
+            "score": 0.82351875
+          },
+          {
+            "chunk_id": "7fd6e3bb398c714142e26848e2589215ffd89b3e7d8caa9d1c84636372f0b0be",
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 5.6",
+            "page": 24,
+            "score": 0.81307828
+          },
+          {
+            "chunk_id": "f9472d1348c4d055282cb5a9db6532574ad77752493ef4c966fec14c155d82bc",
+            "source": "grading-page.html",
+            "section": "Warning/Probation",
+            "page": 1,
+            "score": 0.80033171
+          },
+          {
+            "chunk_id": "9a079c713131dcf9fa920a22b11fe93f0ad171574fa0b47817f369ec497e9854",
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 3.28",
+            "page": 17,
+            "score": 0.7970089300000001
+          }
+        ],
+        "provider": "ollama",
+        "cached": false
+      },
+      {
+        "request_id": "2ba38c39a4fb44bd87dd68cbec50c7f7",
+        "answer": "2.00",
+        "citations": [
+          {
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 5.4",
+            "page": 24
+          },
+          {
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 1.25",
+            "page": 10
+          }
+        ],
+        "answered_from_context": true,
+        "confidence": "high",
+        "retrieved": [
+          {
+            "chunk_id": "67e31c0dbe4d3574b6da2ef721bc16669b2fa8df9e6ed16021efab3a2be979bd",
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 5.4",
+            "page": 24,
+            "score": 0.87678754
+          },
+          {
+            "chunk_id": "91e87ddba3290e98530d390ce08a6e02279040b3093bc2f30b2005c02f6b2813",
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 1.25",
+            "page": 10,
+            "score": 0.82351875
+          },
+          {
+            "chunk_id": "7fd6e3bb398c714142e26848e2589215ffd89b3e7d8caa9d1c84636372f0b0be",
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 5.6",
+            "page": 24,
+            "score": 0.81307828
+          },
+          {
+            "chunk_id": "f9472d1348c4d055282cb5a9db6532574ad77752493ef4c966fec14c155d82bc",
+            "source": "grading-page.html",
+            "section": "Warning/Probation",
+            "page": 1,
+            "score": 0.80033171
+          },
+          {
+            "chunk_id": "9a079c713131dcf9fa920a22b11fe93f0ad171574fa0b47817f369ec497e9854",
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 3.28",
+            "page": 17,
+            "score": 0.7970089300000001
+          }
+        ],
+        "provider": "ollama",
+        "cached": true
+      }
+    ]
+  }
+}

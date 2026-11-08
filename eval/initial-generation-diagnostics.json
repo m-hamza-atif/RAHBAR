@@ -1,0 +1,51 @@
+{
+  "recall_at_3": 0.9375,
+  "recall_at_5": 0.9375,
+  "citation_validity": 1.0,
+  "citation_count": 1,
+  "valid_citation_count": 1,
+  "abstention_correctness": 1.0,
+  "must_abstain_count": 2,
+  "grounded_answer_rate": 0.0625,
+  "by_type": {
+    "ordinary": {
+      "count": 9,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    },
+    "version_sensitive": {
+      "count": 2,
+      "recall_at_3": 0.5,
+      "recall_at_5": 0.5
+    },
+    "exact_term": {
+      "count": 4,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    },
+    "must_abstain": {
+      "count": 2,
+      "recall_at_3": null,
+      "recall_at_5": null
+    },
+    "prompt_injection": {
+      "count": 1,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    }
+  },
+  "questions": 18,
+  "configuration": {
+    "retriever": "chroma",
+    "llm_provider": "ollama-host",
+    "llm_model": "llama3.2:3b",
+    "embed_model": "nomic-embed-text",
+    "embed_dim": 768,
+    "collection": "rahbar_policies",
+    "top_k": 5,
+    "relevance_floor": 0.35,
+    "cache_threshold": 0.9
+  },
+  "golden_sha256": "6812ac705f273c6fdc305a1be94efaafbe4ed26b4db2a26e981dda8eadb73cc6",
+  "diagnosis": "Before explicit supported/unsupported output-mode prompt; valid evidence answers were inconsistently labelled ungrounded, causing safe fallbacks."
+}

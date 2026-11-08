@@ -32,15 +32,19 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.settings = settings
     app.state.retriever = get_retriever(settings)
     app.state.provider = get_provider(settings)
-    # STARTER-TODO(4.4): compare the collection's embedding-model metadata with
-    # settings.embed_model here, and make /readyz fail on a mismatch.
-    # This process only reads the index. The indexer Job writes it.
+    from .services.cache import SemanticCache
+    from .services.readiness import check
+    app.state.cache = SemanticCache(settings)
+    check(app.state.retriever, app.state.cache)
     log.info(
         "api started",
         extra={"retriever": settings.retriever, "llm_provider": settings.llm_provider,
                "embed_model": settings.embed_model, "top_k": settings.top_k},
     )
-    yield
+    try:
+        yield
+    finally:
+        app.state.cache.close()
 
 
 app = FastAPI(title="RAHBAR API", lifespan=lifespan)

@@ -15,11 +15,26 @@ corpus/raw/
 __pycache__/
 *.pyc
 .venv/
+.venv-wsl/
 venv/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
 
 # Local scratch
 *.log
 .DS_Store
+
+# Personal viva notes (not submission artifacts)
+VIVA_GUIDE*.md
+RUN.md
+corpus/**/*.pdf
+
+# Local tooling and runtime output
+.tools/
+.artifacts/
+k8s/overlays/local/

@@ -1,0 +1,61 @@
+{
+  "recall_at_3": 0.9375,
+  "recall_at_5": 0.9375,
+  "citation_validity": 1.0,
+  "citation_count": 28,
+  "valid_citation_count": 28,
+  "abstention_correctness": 1.0,
+  "must_abstain_count": 2,
+  "grounded_answer_rate": 0.9375,
+  "by_type": {
+    "ordinary": {
+      "count": 9,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    },
+    "version_sensitive": {
+      "count": 2,
+      "recall_at_3": 0.5,
+      "recall_at_5": 0.5
+    },
+    "exact_term": {
+      "count": 4,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    },
+    "must_abstain": {
+      "count": 2,
+      "recall_at_3": null,
+      "recall_at_5": null
+    },
+    "prompt_injection": {
+      "count": 1,
+      "recall_at_3": 1.0,
+      "recall_at_5": 1.0
+    }
+  },
+  "golden": "eval/golden.yaml",
+  "questions": 18,
+  "configuration": {
+    "retriever": "chroma",
+    "llm_provider": "ollama-host",
+    "llm_model": "llama3.2:3b",
+    "embed_model": "nomic-embed-text",
+    "embed_dim": 768,
+    "collection": "rahbar_policies",
+    "top_k": 5,
+    "relevance_floor": 0.35,
+    "cache_threshold": 0.9
+  },
+  "golden_sha256": "6812ac705f273c6fdc305a1be94efaafbe4ed26b4db2a26e981dda8eadb73cc6",
+  "index_revision": "607d2b0290f94503b6124fcae8961d1a",
+  "implementation_sha256": {
+    "api/app/services/prompt.py": "9909d513e4c1aaf975ba15f19ab5f3bd9dff987e08d03633f5e6a5377af9d258",
+    "api/app/services/grounding.py": "cccd25f23c2ea3f4596dafda8ce7c3b8584a795be1bcd16e72115786fc9f97b0",
+    "api/app/services/answer.py": "9a967923dc46004f884917c9c2f0f38b4ccce007cc4f87851fbf5cd160dc8b05",
+    "api/app/schemas.py": "41f686a417620765f7255c398157c3d50a3815c0898786394417f3e8a2d9d500",
+    "indexer/pipeline/extract.py": "b13717374c5812755e39ffccc0a6a0fa381fa04055589bf4e4ee1bf61a9f5a25",
+    "indexer/pipeline/chunk.py": "a84e004e126ce8f327172c71d513a67ed6c293806fb385ebfca8176359050cd8"
+  },
+  "model_manifest": "eval/model-manifest.json"
+}

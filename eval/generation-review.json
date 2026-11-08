@@ -1,0 +1,21 @@
+{
+  "reviewer": "AI-assisted inspection, not claimed human review",
+  "after_boolean_mode_fix_grounded_answer_rate": 0.9375,
+  "observed_q15_answer_before_safeguard": "Students on academic warning are restricted from registering for more than five courses, and are not allowed to register for a new course unless recommended by the HoD and approved by Controller of Examinations.",
+  "issue": "Second-warning and must/should scope was flattened in the model paraphrase.",
+  "remedy": "Verbatim retrieved clauses for cited multipart rules containing different obligation levels; citations are revalidated.",
+  "final_q15_answer": "The policy states:\n\nRegistration of Students under Academic Warning\n\n4.4 A student under academic warning or probation:\na) Must register for all such courses, in which the grade\nwas F, provided these courses are being offered.\nb) Should register for all such courses, in which the grade\nwas D, D+ or C-, provided these courses are being\noffered.\nc) Should not register for more than five courses.\nd) Parents/guardian will be called to the campus for a\nmeeting with the HoD for sharing the unsatisfactory\nUndergraduate Academic Rules and Regulations 2026 13\n\nacademic performance of the student.\ne) Students on 2nd academic warning must NOT register\nfor a new course, unless recommended by the HoD\nand approved by Controller of Examinations.\nRegistration of courses with Theory and associated Lab:",
+  "final_q15_citations": [
+    {
+      "source": "academic-rules-handbook-jun-2026.pdf",
+      "section": "Clause 4.4",
+      "page": 19
+    },
+    {
+      "source": "academic-rules-handbook-jun-2026.pdf",
+      "section": "Clause 4.4",
+      "page": 20
+    }
+  ],
+  "final_grounded_answer_rate": 0.9375
+}

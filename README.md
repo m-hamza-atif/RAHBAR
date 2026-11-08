@@ -10,7 +10,7 @@ The FAST-NUCES corpus and fictional CI fixtures are deliberately separate profil
 Fixture answers are not university policy advice.
 
 The badge points to the actual workflow; it does not certify unpublished changes.
-See [final review](docs/FINAL-REVIEW.md) for measured results and pending work.
+The sections below cover setup, deployment and evaluation for a clean checkout.
 
 ```mermaid
 flowchart LR

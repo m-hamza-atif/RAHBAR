@@ -1,5 +1,4 @@
-# RAHBAR starter Makefile. `make` or `make help` lists the targets.
-# Targets marked (needs yours) work once you have written the Dockerfiles or manifests.
+# RAHBAR development and deployment commands. `make help` lists the targets.
 
 SHELL := /bin/bash
 NS ?= rahbar

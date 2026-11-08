@@ -1,6 +1,6 @@
 # ADR 0001: index outside the API in a one-shot Job
 
-Status: Partner A implementation complete; Kubernetes resources owned by Partner B.
+Status: implemented in the indexing pipeline and Kubernetes resources.
 
 The API may have three or more replicas and restart independently. Running PDF
 extraction, OCR and embedding at API startup would duplicate expensive work,
@@ -16,7 +16,7 @@ Only after upserts, stale-ID removal, count verification and Redis invalidation
 does storage publish ready. This is a maintenance readiness window, not an
 atomic old-index/new-index swap. Model/dimension changes recreate the collection.
 
-A Job object is not a distributed mutex. Partner B must prevent overlapping
+A Job object is not a distributed mutex. The deployment prevents overlapping
 writers: CronJob concurrencyPolicy=Forbid handles scheduled overlap, but manual
 Jobs also need operational exclusion. API replicas remain readers of a single
 Chroma server rather than direct competing writers to a database volume.
@@ -26,7 +26,7 @@ a blue/green collection swap would preserve old-index availability but needs an
 atomic active-index pointer and more storage. The simpler readiness window is
 appropriate here. See docs/PIPELINE.md and indexer/pipeline/store.py.
 
-## Partner B implementation
+## Kubernetes implementation
 
 The Job and CronJob are now implemented. Four reasons drive the separation:
 (1) three startup writers race one collection; (2) pod crashes/scaling repeat OCR

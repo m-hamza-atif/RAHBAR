@@ -1,6 +1,6 @@
 # ADR 0003: Chroma with one persistent server and explicit embedding pins
 
-Status: implemented over HTTP; cluster StatefulSet/PVC supplied by Partner B.
+Status: implemented over HTTP with a Kubernetes StatefulSet and PVC.
 
 Chroma provides explicit document embeddings, scalar metadata filters and cosine
 retrieval with a small local-service footprint. The client/server version is
@@ -29,7 +29,7 @@ shared persistent service behavior across replicas. A larger managed vector
 service adds deployment/account requirements unnecessary for this corpus.
 A second Chroma collection for the answer cache was rejected in ADR 0002.
 
-## Partner B StatefulSet/security implementation
+## StatefulSet and security implementation
 
 `k8s/base/chroma.yaml:85` defines the 2 Gi claim mounted at `/data`, matching the
 pinned server's inspected `/config.yaml`. UID/fsGroup 10001 permits volume writes

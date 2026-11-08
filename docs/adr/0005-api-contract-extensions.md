@@ -31,5 +31,5 @@ records its model/index provenance; no credential fields are exposed.
 The provider interface additionally accepts validation feedback and may return
 raw JSON with token usage. Central validation performs the same retry/citation
 checks for all providers. Provider implementations and callers were updated
-together. Partner B needs no route or port changes: POST /api/ask and the existing
+together. The route and port contract remains compatible: POST /api/ask and the existing
 probe endpoints remain unchanged.

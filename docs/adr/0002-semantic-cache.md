@@ -32,7 +32,7 @@ retrieval/generation, and old-revision keys cannot be read after a rebuild even
 if a late cache write races namespace invalidation. The evaluator bypasses cache
 by default via X-Cache-Bypass=true to measure actual retrieval/generation.
 
-Redis requires Partner B's persistent volume for restart persistence. Query
+Redis uses its persistent volume for restart persistence. Query
 texts are retained in Redis, not stdout; logs contain identifiers/scores rather
 than complete questions/evidence. The application intentionally handles public
 policy content rather than private student records.

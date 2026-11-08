@@ -189,7 +189,7 @@ Every chunk stores:
 
 CLI success is exit 0; invalid settings, empty corpus, embedding failures, storage
 failures and cache outages exit 1 with a JSON error. `python -m pipeline.run`
-remains the container entrypoint expected by Partner B.
+remains the container pipeline entrypoint.
 
 ## Phase 2 verification
 
@@ -284,11 +284,12 @@ pdfplumber layout/character caches page by page. Explicitly closing both visible
 and original pages reduced the measured peak to 165,492 KiB (about 161.6 MiB).
 Both runs completed successfully with real OCR. These are GNU time local-process
 measurements, not Kubernetes pod peaks or real-model server memory. Ollama runs
-separately. Partner B must still capture kubectl top pods and validate container
-limits with the actual cluster image. See eval/experiments.json resource_sample.
+separately. Actual cluster samples and container limits are recorded in
+docs/evidence/public-corpus-kubernetes-runtime.json. See also
+eval/experiments.json resource_sample for the local process measurements.
 
 
-Final evaluation: recall@3/5=0.9375, citation validity=1.0 (28/28),
+Original local evaluation: recall@3/5=0.9375, citation validity=1.0 (28/28),
 abstention correctness=1.0 (2/2). Fifteen of sixteen answerable questions were
 supported; the current-version Clause 4.3 retrieval miss remains visible. Final
 local collections are rahbar_policies (875 real-model chunks) and

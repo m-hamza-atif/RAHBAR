@@ -63,7 +63,7 @@ The filtered run excludes old editions, but its top five did not include current
 
 The 2026 PDF contains characters with x positions around -376, outside the visible page. Extracting the full object layout imported text from facing pages. Restricting extraction to the visible bounding box removed this contamination. OCR PSM 6 also kept old clause numbers next to their words. Regression tests use a tiny PDF with deliberately off-page text and a real OCR-style comma after Clause 4.3. No uncertain OCR number such as 44 was guessed to be 4.4.
 
-All experiments measure this local corpus/setup. They are not evidence that the Kubernetes cluster has been deployed. Real cluster logs, memory margins and screenshots are Partner B integration evidence.
+These experiments measure the local corpus/setup. The separate Kubernetes deployment logs, resource samples and human screenshots are recorded in docs/evidence.
 
 The local full-corpus resource experiment exposed retained PDF layout caches: peak
 RSS fell from 1,083,120 KiB to 165,492 KiB after explicit per-page close. Both runs

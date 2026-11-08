@@ -63,11 +63,13 @@ def main():
                    input=yaml.safe_dump_all(calico), text=True, check=True)
     k('rollout', 'status', 'daemonset/calico-node', '-n', 'kube-system', '--timeout=300s')
     k('wait', '--for=condition=Ready', 'nodes', '--all', '--timeout=300s')
-    k('apply', '-f', 'https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.2/components.yaml')
+    metrics = list(yaml.safe_load_all(Path('k8s/infra/metrics-server.yaml').read_text()))
     # kind kubelets use self-signed serving certificates; this exception is limited
     # to this disposable lab cluster, not an application or production setting.
-    k('patch', 'deployment', 'metrics-server', '-n', 'kube-system', '--type=json', '-p',
-      '[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]')
+    deployment = next(d for d in metrics if d['kind'] == 'Deployment')
+    deployment['spec']['template']['spec']['containers'][0]['args'].append('--kubelet-insecure-tls')
+    subprocess.run(['kubectl', '--context', context, 'apply', '-f', '-'],
+                   input=yaml.safe_dump_all(metrics), text=True, check=True)
     k('rollout', 'status', 'deployment/metrics-server', '-n', 'kube-system', '--timeout=300s')
     k('apply', '-f', 'k8s/infra/traefik.yaml')
     k('rollout', 'status', 'deployment/traefik', '-n', 'ingress-system', '--timeout=300s')

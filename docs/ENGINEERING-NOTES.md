@@ -1,6 +1,6 @@
-# Engineering notes ? Partner A implementation and Partner B handoff
+# Engineering notes
 
-These notes distinguish local real-model behavior from Partner B's fixture-cluster
+These notes distinguish local real-model behavior from the fixture-cluster
 evidence. The deployment answers at the end supply the applied Kubernetes details.
 The independent full public-corpus Kubernetes run is recorded in
 `docs/evidence/public-corpus-kubernetes-runtime.json` and `eval/results.json`.
@@ -17,7 +17,7 @@ work, create conflicting rebuilds and keep replicas unready while they attempt
 to construct their own prerequisite. A Job separates indexing resources/lifecycle
 from query serving. A Job itself does not serialize other Jobs: forbid scheduled
 overlap and coordinate manual reindexes. Actual Job/CronJob manifest line numbers
-are supplied in the Partner B deployment answers below.
+are supplied in the deployment details below.
 
 ## 2. Swapped liveness/readiness and a 90-second Chroma stall
 
@@ -134,7 +134,7 @@ were local real-model results. The independent full Kubernetes evaluation now
 records the same recall and abstention correctness, with 29/29 valid citations;
 its per-question answers are in `eval/results.json`.
 
-## Partner B deployment answers (supersede earlier Q1-4 handoff placeholders)
+## Deployed Kubernetes settings
 
 **Q1 — single writer.** Three readers are set at `k8s/base/api.yaml:7`. The Job
 retry budget is `k8s/base/indexer.yaml:7`, weekly Forbid at

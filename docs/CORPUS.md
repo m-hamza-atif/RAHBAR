@@ -166,4 +166,4 @@ and a deliberate injection line. The fictional institution is named explicitly.
 `golden.fixture.yaml` includes ordinary, version, exact, abstention and injection
 probes. No network or OCR is needed for these fixtures. The README is excluded
 by indexer discovery. Future CI should set `CORPUS_DIR=eval/fixtures` from the
-root, or use an absolute mounted path; preserve these filenames for Partner B.
+root, or use an absolute mounted path; preserve these filenames when uploading to the cluster.

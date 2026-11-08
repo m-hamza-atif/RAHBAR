@@ -2,7 +2,13 @@
 
 Checked after the human pushed `8827fb6` and opened
 [PR #1: dev into main](https://github.com/m-hamza-atif/RAHBAR/pull/1).
-The local installer follow-up still needs a manual commit/push.
+The installer follow-up was pushed as `0ab5da4`. The human then demonstrated a
+recall-gate failure at `ee5a302` and restored the fixture at `9a99b8c`. The latest
+[PR CI run](https://github.com/m-hamza-atif/RAHBAR/actions/runs/42476906879) and
+[push CI run](https://github.com/m-hamza-atif/RAHBAR/actions/runs/42476902742)
+both succeeded. The supplied screenshots now record the failed recall gate and
+the 12 green checks. The evidence commit still needs pushing, followed by fresh
+green checks, Partner B approval and the main merge.
 
 | Item | Link | Status |
 | --- | --- | --- |
@@ -38,17 +44,18 @@ submission evidence. CI success does not replace CD success.
 
 ## Screenshots and next steps
 
-`blocked-merge.png` is genuine, but shows download failures/missing approval.
-It does not yet show an evaluation regression: that job was skipped.
+`blocked-merge.png` now shows the real evaluation log ending in
+`GATE FAILED: recall@5 fell more than five percentage points`. It captures the
+failed gate rather than the PR's disabled merge button; retain a PR-level blocked
+merge capture too if one was taken during that failure.
 `branch-protection.png` shows the ruleset listing; open the rule to capture its
 main target, approval count and six checks for stronger evidence. The API confirms
-those settings. `green-checks.png` is still missing.
+those settings. `green-checks.png` now shows all 12 successful checks on PR #1;
+the merge is awaiting the required approval.
 
-1. Commit/push the installer fix, test, documentation and supplied PNGs manually;
-   private CODEX_REQUESTS.md has the exact commands. Wait for fresh CI.
-2. Before merging, follow the reversible fixture-heading demonstration in
-   `evidence/branch-protection-and-ci-cd.md` for the failed eval and green screenshots.
-   Commit the final screenshots to dev. Preserve the frozen baseline.
+1. Push the final screenshot/evidence commit. The fixture-heading demonstration
+   and correction are complete; the frozen baseline is unchanged.
+2. Wait for fresh CI on the evidence commit. Do not merge a pending/failing head.
 3. Partner B approves PR #1; merge it manually after checks pass.
 4. CD automatically tests, scans, publishes and deploys SHA-tagged images. Copy
    the successful run URL and verify that SHA on all three Hub tag pages.

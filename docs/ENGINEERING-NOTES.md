@@ -1,8 +1,9 @@
 # Engineering notes ? Partner A implementation and Partner B handoff
 
-These notes distinguish implemented local behavior from cluster evidence that
-must be supplied after Partner B merges the Kubernetes track. File/line references
-below were generated from this checkout, not guessed manifest filenames/lines.
+These notes distinguish local real-model behavior from Partner B's fixture-cluster
+evidence. The deployment answers at the end supply the applied Kubernetes details.
+The independent full public-corpus Kubernetes run is recorded in
+`docs/evidence/public-corpus-kubernetes-runtime.json` and `eval/results.json`.
 
 ## 1. Indexing in API startup with three replicas and one Chroma volume
 
@@ -16,7 +17,7 @@ work, create conflicting rebuilds and keep replicas unready while they attempt
 to construct their own prerequisite. A Job separates indexing resources/lifecycle
 from query serving. A Job itself does not serialize other Jobs: forbid scheduled
 overlap and coordinate manual reindexes. Actual Job/CronJob manifest line numbers
-remain Partner B evidence, not invented here.
+are supplied in the Partner B deployment answers below.
 
 ## 2. Swapped liveness/readiness and a 90-second Chroma stall
 
@@ -32,7 +33,7 @@ three consecutive failures can trigger a restart after roughly 40-60 seconds,
 depending on probe phase and timeout. Across three replicas this risks correlated
 restarts during a 90-second shared outage. It is not correct to calculate an exact
 restart total from 90/20 alone: startup probes, deadlines and backoff matter.
-Partner B must replace these proposed values with deployed manifest line references.
+The deployment answers below give the actual matching probe values and references.
 
 ## 3. CPU HPA and the 8% paradox
 
@@ -44,7 +45,8 @@ latency and cache metrics live in `api/app/routes/metrics.py:28`.
 A stronger autoscaling design would expose in-flight generation or queue depth
 through a Prometheus adapter/KEDA and bound concurrency. That custom scaling
 signal is a recommendation, not an already deployed component. Cluster HPA
-readings and manifest line references are Partner B's remaining evidence.
+readings and manifest line references are supplied in the deployment answers and
+`docs/evidence/endpoints-hpa.txt`.
 
 ## 4. Memory, limits, margin and exit 137
 
@@ -52,10 +54,14 @@ Real local GNU time measurements for full-corpus WSL indexing with OCR and stub
 vectors: peak RSS fell from 1,083,120 KiB to 165,492 KiB (161.6 MiB) after
 `indexer/pipeline/extract.py:153` explicitly released
 retained PDF layouts. Both runs exited zero. Ollama is external and its memory is
-not included. These are not Kubernetes pod peaks. The exact container memory
-limit and peak under the deployed image remain unmeasured until Partner B runs
-`kubectl top pods -n rahbar` while the indexer is active and records limits from
-the applied manifests. Margin = configured limit - measured peak in the same units.
+not included. These are not Kubernetes pod peaks. Partner B separately reports
+76.93 MB (73.36 MiB) during active fixture indexing, against a 1536 MiB container
+limit, in `docs/evidence/kubectl-top.txt`. The recorded fixture margin is 1462.64
+MiB. The committed evidence summarizes runtime sampling; it does not include the
+raw sampling trace. The independent full-corpus run additionally sampled 232 MiB
+working set and a kernel high-water value of 258,969,600 bytes (246.97 MiB) during
+active indexing, against a 1536 MiB limit. The Job completed without an OOM kill.
+That live high-water read is not a certified final peak after completion.
 
 Exit 137 means SIGKILL (128+9), not automatically proof of OOM. Check pod status
 reason OOMKilled and events/logs to distinguish memory exhaustion from another
@@ -119,12 +125,14 @@ have an actual hour-long incident from their own work, append its real timeline
 and evidence during human review.
 
 
-Final full evaluation confirms recall@3/5=0.9375, 28/28 valid citations and 2/2
+The original Phase 4 local evaluation recorded recall@3/5=0.9375, 28/28 valid citations and 2/2
 correct absent-topic refusals. Fifteen of sixteen answerable questions returned
 supported answers. q11 is the retained current-version retrieval miss. The
 multipart obligation safeguard in `api/app/services/grounding.py:8` quotes actual
 retrieved source/page clauses rather than strengthening should into must. These
-are local real-model results, not a claim of cluster deployment.
+were local real-model results. The independent full Kubernetes evaluation now
+records the same recall and abstention correctness, with 29/29 valid citations;
+its per-question answers are in `eval/results.json`.
 
 ## Partner B deployment answers (supersede earlier Q1-4 handoff placeholders)
 
@@ -161,6 +169,15 @@ implemented. Metrics-server/HPA runtime evidence is recorded separately.
 (`k8s/base/indexer.yaml:41`). Chroma is 256/1024 MiB, Redis 64/256 MiB and UI
 32/64 MiB. These are bounded initial budgets.
 Measured fixture indexer peak memory is 76.93 MB (~73.36 MiB) at 108.68% CPU, captured via container runtime sampling during an active reindex run (`docs/evidence/kubectl-top.txt`). With the configured 1536 MiB limit, the fixture safety margin is 1536 MiB - 73.36 MiB = 1462.64 MiB (95.2% headroom). The Job exited 0 with no OOMKilled events.
-For full-corpus indexing with OCR, Partner A's measured WSL process peak RSS was 165,492 KiB (~161.6 MiB) after releasing PDF layouts (`indexer/pipeline/extract.py:153`), which would yield an estimated ~1374 MiB margin against the deployed 1536 MiB limit.
+For full-corpus indexing with OCR, Partner A's measured WSL process peak RSS was
+165,492 KiB (~161.6 MiB) after releasing PDF layouts
+(`indexer/pipeline/extract.py:153`). That process measurement is not a container
+measurement and cannot establish the full-corpus Kubernetes safety margin.
+The independent full Kubernetes run observed 232 MiB working set with
+`kubectl top` and a cgroup memory.peak counter of 246.97 MiB while the indexer
+was active. Headroom against that observed high-water sample was 1289.03 MiB;
+the final post-completion peak was not certified. The Job processed all 875
+chunks/37 OCR pages and exited successfully. The sample and applied limit are
+recorded in `docs/evidence/public-corpus-kubernetes-runtime.json`.
 Exit 137 is SIGKILL (128+9); check OOMKilled status, events and previous logs before
 attributing it to memory. Margin must be calculated as configured limit minus measured peak from the same run, not guessed.

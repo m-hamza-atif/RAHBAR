@@ -2,8 +2,8 @@
   "recall_at_3": 0.9375,
   "recall_at_5": 0.9375,
   "citation_validity": 1.0,
-  "citation_count": 28,
-  "valid_citation_count": 28,
+  "citation_count": 29,
+  "valid_citation_count": 29,
   "abstention_correctness": 1.0,
   "must_abstain_count": 2,
   "grounded_answer_rate": 0.9375,
@@ -47,7 +47,7 @@
       ],
       "expect": "2.00",
       "response": {
-        "request_id": "dfce5373fd1e4d9881e7422c167e0659",
+        "request_id": "70f6f822f6e245c7a5b7ad1ec5e9c1ff",
         "answer": "2.00",
         "citations": [
           {
@@ -103,7 +103,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 8.31,
+      "seconds": 4.0,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -121,7 +121,7 @@
       ],
       "expect": "2.00",
       "response": {
-        "request_id": "edeb1c4892b54445b3c66551fd63c096",
+        "request_id": "2c6fbb91cc194ca68b0b5e516f9aadbe",
         "answer": "2.00",
         "citations": [
           {
@@ -172,7 +172,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 7.1,
+      "seconds": 2.57,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -190,8 +190,8 @@
       ],
       "expect": "20",
       "response": {
-        "request_id": "6676673160464f7da29ddcc0f33928f2",
-        "answer": "100% attendance is required, and the HoD may condone up to 20% absence.",
+        "request_id": "e4a5e082282942c0b8580270b6f9b052",
+        "answer": "100% attendance is required. The HoD may condone up to 20% absence.",
         "citations": [
           {
             "source": "academic-rules-handbook-jun-2026.pdf",
@@ -246,7 +246,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 8.81,
+      "seconds": 3.82,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -264,8 +264,8 @@
       ],
       "expect": "F/A",
       "response": {
-        "request_id": "81d495540de244f58bf0206916d6bbb5",
-        "answer": "Student will be ineligible to appear in the final examination and assigned F/A grade.",
+        "request_id": "bccda35c84ce464cb6728f74ee897346",
+        "answer": "Student will be ineligible to appear in the final examination and assigned an F/A grade.",
         "citations": [
           {
             "source": "academic-rules-handbook-jun-2026.pdf",
@@ -320,7 +320,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 7.92,
+      "seconds": 3.31,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -338,7 +338,7 @@
       ],
       "expect": "50",
       "response": {
-        "request_id": "62ad4007ab3549dd96beeecb18b4a2b7",
+        "request_id": "35b9461ac6a144be8d0560cb257eda0e",
         "answer": "The semester work and the final examination are normally weighted at 50% each towards the final grade.",
         "citations": [
           {
@@ -394,7 +394,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 8.35,
+      "seconds": 3.56,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -412,7 +412,7 @@
       ],
       "expect": "12,000",
       "response": {
-        "request_id": "a7398f35b75246959615fdd0370f8ce5",
+        "request_id": "a9ddd4909e1845ffa6e5e51a2e884f47",
         "answer": "Rs. 12,000",
         "citations": [
           {
@@ -468,7 +468,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 8.13,
+      "seconds": 3.42,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -486,7 +486,7 @@
       ],
       "expect": "100",
       "response": {
-        "request_id": "a9504e06b1294f32b60b2df548d9424d",
+        "request_id": "8b7c6f44ffcb47458ca2defdfdbb2276",
         "answer": "100% of the admission fee",
         "citations": [
           {
@@ -537,7 +537,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 7.23,
+      "seconds": 2.64,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -555,7 +555,7 @@
       ],
       "expect": "4.00",
       "response": {
-        "request_id": "ac3b5e434d0f49fd93d00716a476646c",
+        "request_id": "426971eea5aa480b9203b6c2515d2bd2",
         "answer": "4.00",
         "citations": [
           {
@@ -606,7 +606,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 7.18,
+      "seconds": 2.69,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -624,7 +624,7 @@
       ],
       "expect": "not",
       "response": {
-        "request_id": "88626e216336405097c3a6bf6215fb8d",
+        "request_id": "f4366d2eb3424ca5b6f25ae3eec3ec74",
         "answer": "False",
         "citations": [
           {
@@ -675,7 +675,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 8.27,
+      "seconds": 3.76,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -693,7 +693,7 @@
       ],
       "expect": "batch",
       "response": {
-        "request_id": "4f98713c712d459eb72c422ef79a3ff7",
+        "request_id": "858dff4727df4648b75e92965a6f2ff2",
         "answer": "Yes",
         "citations": [
           {
@@ -749,7 +749,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 7.93,
+      "seconds": 3.23,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -767,7 +767,7 @@
       ],
       "expect": "final",
       "response": {
-        "request_id": "abea9e9ca37444eb999b3d40d23b26d1",
+        "request_id": "766d669b0dc64eb8bee635cee65cc1f7",
         "answer": "The available corpus does not cover the requested information.",
         "citations": [],
         "answered_from_context": false,
@@ -812,7 +812,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 11.77,
+      "seconds": 4.08,
       "recall_at_3": 0.0,
       "recall_at_5": 0.0,
       "citation_validity": null,
@@ -830,8 +830,8 @@
       ],
       "expect": "100",
       "response": {
-        "request_id": "e6ae333c70584ff9b06d53c590e23cfd",
-        "answer": "100% attendance is required",
+        "request_id": "b09d159888fc435b88d9c51d34cca309",
+        "answer": "100% attendance is required in lectures, labs, tutorials, seminars and discussions.",
         "citations": [
           {
             "source": "academic-rules-handbook-jun-2026.pdf",
@@ -886,7 +886,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 8.0,
+      "seconds": 3.64,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -904,13 +904,18 @@
       ],
       "expect": "2.00",
       "response": {
-        "request_id": "3a524482b2e8463095d8a870e4abd7bd",
-        "answer": "yes",
+        "request_id": "60a5dcf203b943aaa5ffd6e48766a8e0",
+        "answer": "true",
         "citations": [
           {
             "source": "academic-rules-handbook-jun-2026.pdf",
             "section": "Clause 1.25",
             "page": 10
+          },
+          {
+            "source": "academic-rules-handbook-jun-2026.pdf",
+            "section": "Clause 5.4",
+            "page": 24
           }
         ],
         "answered_from_context": true,
@@ -955,7 +960,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 7.22,
+      "seconds": 3.41,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -973,7 +978,7 @@
       ],
       "expect": "12,000",
       "response": {
-        "request_id": "942bfb492873478da83d5341849f382f",
+        "request_id": "ce75649506e54c559a9c2baef9fb3c9f",
         "answer": "Rs. 12,000",
         "citations": [
           {
@@ -1029,7 +1034,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 7.94,
+      "seconds": 3.29,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -1047,7 +1052,7 @@
       ],
       "expect": "five",
       "response": {
-        "request_id": "100a189c1c04477fae1ae3cc05b6999c",
+        "request_id": "6ed14b6b01b8477e85447ae03f8d8a22",
         "answer": "The policy states:\n\nRegistration of Students under Academic Warning\n\n4.4 A student under academic warning or probation:\na) Must register for all such courses, in which the grade\nwas F, provided these courses are being offered.\nb) Should register for all such courses, in which the grade\nwas D, D+ or C-, provided these courses are being\noffered.\nc) Should not register for more than five courses.\nd) Parents/guardian will be called to the campus for a\nmeeting with the HoD for sharing the unsatisfactory\nUndergraduate Academic Rules and Regulations 2026 13\n\nacademic performance of the student.\ne) Students on 2nd academic warning must NOT register\nfor a new course, unless recommended by the HoD\nand approved by Controller of Examinations.\nRegistration of courses with Theory and associated Lab:",
         "citations": [
           {
@@ -1103,7 +1108,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 9.08,
+      "seconds": 4.2,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -1116,7 +1121,7 @@
       "relevant": [],
       "expect": null,
       "response": {
-        "request_id": "65306db896ba40a09a8e19fe2fa62c5e",
+        "request_id": "72f3bbe71d3a498394364f6b0ce691da",
         "answer": "The available corpus does not cover the requested information.",
         "citations": [],
         "answered_from_context": false,
@@ -1161,7 +1166,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 11.88,
+      "seconds": 5.0,
       "recall_at_3": null,
       "recall_at_5": null,
       "citation_validity": null,
@@ -1174,7 +1179,7 @@
       "relevant": [],
       "expect": null,
       "response": {
-        "request_id": "926967305abb4e07a0df2badb93026ea",
+        "request_id": "1493d496d6564122907df70c66bdd6f9",
         "answer": "The available corpus does not cover the requested information.",
         "citations": [],
         "answered_from_context": false,
@@ -1219,7 +1224,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 12.06,
+      "seconds": 4.92,
       "recall_at_3": null,
       "recall_at_5": null,
       "citation_validity": null,
@@ -1237,7 +1242,7 @@
       ],
       "expect": "100",
       "response": {
-        "request_id": "a3310d3898e44ccd9e96bcf7bff81a97",
+        "request_id": "60f2368c89f74824a434ad8298057036",
         "answer": "100%",
         "citations": [
           {
@@ -1308,7 +1313,7 @@
         "provider": "ollama",
         "cached": false
       },
-      "seconds": 9.59,
+      "seconds": 4.83,
       "recall_at_3": 1.0,
       "recall_at_5": 1.0,
       "citation_validity": 1.0,
@@ -1329,14 +1334,20 @@
     "cache_threshold": 0.9
   },
   "golden_sha256": "6812ac705f273c6fdc305a1be94efaafbe4ed26b4db2a26e981dda8eadb73cc6",
-  "index_revision": "607d2b0290f94503b6124fcae8961d1a",
+  "index_revision": "1781d8da0d804047a02accd9b4b0591f",
+  "verified_at": "2026-11-08T09:58:15.891521+00:00",
+  "runtime": "Kubernetes via Traefik Ingress; Windows Ollama",
+  "gate_failures": [],
+  "model_manifest": "eval/model-manifest.json",
+  "runtime_evidence": "docs/evidence/public-corpus-kubernetes-runtime.json",
+  "source_commit_base": "2efaa98f49436c73a82ee29de670e515dc30cca9",
+  "source_note": "Includes local final-review fixes; image IDs are recorded in pod evidence.",
   "implementation_sha256": {
     "api/app/services/prompt.py": "9909d513e4c1aaf975ba15f19ab5f3bd9dff987e08d03633f5e6a5377af9d258",
     "api/app/services/grounding.py": "cccd25f23c2ea3f4596dafda8ce7c3b8584a795be1bcd16e72115786fc9f97b0",
-    "api/app/services/answer.py": "9a967923dc46004f884917c9c2f0f38b4ccce007cc4f87851fbf5cd160dc8b05",
+    "api/app/services/answer.py": "2134aece6a0242957f2cdf581aa7653e3e87d998d5929c091fb2d3450300bfd6",
     "api/app/schemas.py": "41f686a417620765f7255c398157c3d50a3815c0898786394417f3e8a2d9d500",
     "indexer/pipeline/extract.py": "b13717374c5812755e39ffccc0a6a0fa381fa04055589bf4e4ee1bf61a9f5a25",
     "indexer/pipeline/chunk.py": "a84e004e126ce8f327172c71d513a67ed6c293806fb385ebfca8176359050cd8"
-  },
-  "model_manifest": "eval/model-manifest.json"
+  }
 }

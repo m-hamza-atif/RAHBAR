@@ -16,6 +16,14 @@ in the user's configured D:/Ollama/Data; no additional variants are required.
 
 ## Full measured results
 
+The final 8 November integration run used all eight public documents in Kubernetes,
+real nomic embeddings and Windows llama3.2:3b through Traefik Ingress. It indexed
+875 chunks including 37 OCR pages and passed the frozen gate, with 29/29 valid
+citations and 2/2 correct absent-topic refusals. `eval/results.json` now contains
+that run. The baseline is unchanged. Runtime/resource/network evidence is in
+`docs/evidence/public-corpus-kubernetes-runtime.json`. The earlier container-only
+and Phase 4 local runs remain separate evidence, not substitutes for this run.
+
 Real-generation recall@3=0.9375, recall@5=0.9375, citation validity=1.0,
 and must-abstain correctness=1.0. The answered-from-context flag rate
 on answerable questions is 0.9375. Exact per-question outputs, expected-text

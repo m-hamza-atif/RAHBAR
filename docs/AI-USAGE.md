@@ -85,3 +85,33 @@ In accordance with project safeguards, Antigravity operated strictly locally: no
 8. **Final submission check:** Executed `python scripts/check_submission.py`, achieving **167 passed, 2 warnings (historical commit counts), 0 failures**.
 
 Human review is still required for remote GitHub Actions execution, Docker Hub credential configuration, branch protection rule creation, and PR review/merge.
+
+## Independent integrated review — 8 November 2026
+
+Codex reviewed Partner B's integrated dev commit `2efaa98`, read the human's
+MESSAGE.txt, and removed that file after preserving its concerns in
+`docs/FINAL-REVIEW.md`. It corrected the contradictory memory notes, obsolete
+required-check names, invalid-baseline demonstration instructions, broken
+verification reference, and shell-script line endings. It preserved frozen
+baselines and performed no remote Git operation, PR creation or publication.
+
+Both OS environments were updated to the committed dependencies. All 102 tests
+passed on Windows and Ubuntu; measured Windows API coverage was 90.84%. Ruff,
+API/indexer mypy, actionlint and strict schemas passed. A clean-source Linux
+checker run with copied real Git metadata reported 166 passes, three warnings,
+zero failures. Real Chroma/Redis fixture evaluation passed; an isolated temporary
+fixture-heading regression correctly failed recall at 0.833333. A rebuilt
+read-only API container using the existing Windows models passed full-corpus
+evaluation at recall@5 0.9375, citation validity 1.0 (24/24), and abstention
+correctness 1.0 (2/2). It downloaded no models. Container evidence is labelled
+separately from Kubernetes evidence. The final review records remaining release
+and cluster checks; no pending outcome is represented as already successful.
+
+Further live review found and fixed the model-overlay ConfigMap namespace and a
+kind/Calico pod-CIDR overlap with Docker Desktop's Windows host. Three network
+regression cases bring the final suite to 105 passing tests on both operating
+systems. The full public-corpus Kubernetes Job completed with 875 chunks and
+37 OCR pages; Ingress evaluation passed at recall@5 0.9375, 29/29 valid citations
+and 2/2 correct abstentions. Codex updated `eval/results.json` with that genuine
+run, preserved the frozen baseline, and recorded the temporary node-only routing
+diagnosis explicitly. Windows model binding/firewall settings were not changed.

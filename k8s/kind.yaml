@@ -2,7 +2,8 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 networking:
   disableDefaultCNI: true
-  podSubnet: 192.168.0.0/16
+  # Keep pods separate from common LANs and Docker Desktop's 192.168.65.254 host.
+  podSubnet: 10.244.0.0/16
 nodes:
   - role: control-plane
     extraPortMappings:

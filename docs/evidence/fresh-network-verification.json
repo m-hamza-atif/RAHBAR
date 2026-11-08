@@ -1,0 +1,242 @@
+{
+  "verified_at": "2026-11-08T10:10:20.938120+00:00",
+  "purpose": "Fresh corrected subnet proof; full RAG evaluation is recorded separately.",
+  "model_logs": "200 {\"models\":[{\"name\":\"llama3.2:3b\",\"model\":\"llama3.2:3b\",\"modified_at\":\"2026-11-07T18:57:02.5579582+05:00\",\"size\":2019393189,\"digest\":\"a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72\",\"details\":{\"parent_model\":\"\",\"format\":\"gguf\",\"family\":\"llama\",\"families\":[\"llama\"],\"parameter_size\":\"3.2B\",\"quantization_level\":\"Q4_K_M\",\"context_length\":131072,\"embedding_length\":3072,\"runner\":\"ggml\"},\"capabilities\":[\"completion\",\"tools\"]},{\"name\":\"nomic-embed-text:latest\",\"model\":\"nomic-embed-text:latest\",\"modified_at\":\"2026-11-07T18:23:23.0169501+05:00\",\"size\":274302450,\"digest\":\"0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f\",\"details\":{\"parent_model\":\"\",\"format\":\"gguf\",\"family\":\"nomic-bert\",\"families\":[\"nomic-bert\"],\"parameter_size\":\"137M\",\"quantization_level\":\"F16\",\"context_length\":2048,\"embedding_length\":768,\"runner\":\"ggml\"},\"capabilities\":[\"embedding\"]}]}\n",
+  "pool": {
+    "apiVersion": "v1",
+    "items": [
+      {
+        "apiVersion": "crd.projectcalico.org/v1",
+        "kind": "IPPool",
+        "metadata": {
+          "annotations": {
+            "projectcalico.org/metadata": "{\"creationTimestamp\":\"2026-11-08T10:08:50Z\"}"
+          },
+          "creationTimestamp": "2026-11-08T10:08:50Z",
+          "generation": 1,
+          "name": "default-ipv4-ippool",
+          "resourceVersion": "889",
+          "uid": "7c4d53bb-08de-425b-a915-65dc5bf8f29d"
+        },
+        "spec": {
+          "allowedUses": [
+            "Workload",
+            "Tunnel"
+          ],
+          "blockSize": 26,
+          "cidr": "10.244.0.0/16",
+          "ipipMode": "Always",
+          "natOutgoing": true,
+          "nodeSelector": "all()",
+          "vxlanMode": "Never"
+        }
+      }
+    ],
+    "kind": "List",
+    "metadata": {
+      "resourceVersion": ""
+    }
+  },
+  "pod": {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "annotations": {
+        "cni.projectcalico.org/containerID": "b300351d74ed0b32be6718760cc794f356fdb7c974de9aa9fb523516573797fc",
+        "cni.projectcalico.org/podIP": "",
+        "cni.projectcalico.org/podIPs": ""
+      },
+      "creationTimestamp": "2026-11-08T10:07:04Z",
+      "labels": {
+        "app": "indexer"
+      },
+      "name": "model-network-proof",
+      "namespace": "rahbar",
+      "resourceVersion": "980",
+      "uid": "da98d95f-8f9a-44ca-9220-bed775916199"
+    },
+    "spec": {
+      "automountServiceAccountToken": false,
+      "containers": [
+        {
+          "command": [
+            "python",
+            "-u",
+            "-c",
+            "import httpx; r=httpx.get('http://192.168.65.254:11434/api/tags',timeout=10); print(r.status_code,r.text); r.raise_for_status()"
+          ],
+          "env": [
+            {
+              "name": "HOME",
+              "value": "/tmp"
+            },
+            {
+              "name": "TMPDIR",
+              "value": "/tmp"
+            }
+          ],
+          "image": "rahbar-api:final-review",
+          "imagePullPolicy": "IfNotPresent",
+          "name": "api",
+          "ports": [
+            {
+              "containerPort": 8000,
+              "name": "http",
+              "protocol": "TCP"
+            }
+          ],
+          "resources": {
+            "limits": {
+              "cpu": "500m",
+              "memory": "512Mi"
+            },
+            "requests": {
+              "cpu": "100m",
+              "memory": "128Mi"
+            }
+          },
+          "securityContext": {
+            "allowPrivilegeEscalation": false,
+            "capabilities": {
+              "drop": [
+                "ALL"
+              ]
+            },
+            "readOnlyRootFilesystem": true,
+            "runAsNonRoot": true
+          },
+          "terminationMessagePath": "/dev/termination-log",
+          "terminationMessagePolicy": "File",
+          "volumeMounts": [
+            {
+              "mountPath": "/tmp",
+              "name": "tmp"
+            }
+          ]
+        }
+      ],
+      "dnsPolicy": "ClusterFirst",
+      "enableServiceLinks": false,
+      "nodeName": "rahbar-final-review-control-plane",
+      "preemptionPolicy": "PreemptLowerPriority",
+      "priority": 0,
+      "restartPolicy": "Never",
+      "schedulerName": "default-scheduler",
+      "securityContext": {
+        "fsGroup": 10001,
+        "runAsGroup": 10001,
+        "runAsNonRoot": true,
+        "runAsUser": 10001,
+        "seccompProfile": {
+          "type": "RuntimeDefault"
+        }
+      },
+      "serviceAccount": "default",
+      "serviceAccountName": "default",
+      "terminationGracePeriodSeconds": 30,
+      "tolerations": [
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/not-ready",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        },
+        {
+          "effect": "NoExecute",
+          "key": "node.kubernetes.io/unreachable",
+          "operator": "Exists",
+          "tolerationSeconds": 300
+        }
+      ],
+      "volumes": [
+        {
+          "emptyDir": {
+            "sizeLimit": "256Mi"
+          },
+          "name": "tmp"
+        }
+      ]
+    },
+    "status": {
+      "conditions": [
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-11-08T10:09:04Z",
+          "status": "False",
+          "type": "PodReadyToStartContainers"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-11-08T10:07:04Z",
+          "reason": "PodCompleted",
+          "status": "True",
+          "type": "Initialized"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-11-08T10:09:01Z",
+          "reason": "PodCompleted",
+          "status": "False",
+          "type": "Ready"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-11-08T10:09:01Z",
+          "reason": "PodCompleted",
+          "status": "False",
+          "type": "ContainersReady"
+        },
+        {
+          "lastProbeTime": null,
+          "lastTransitionTime": "2026-11-08T10:07:04Z",
+          "status": "True",
+          "type": "PodScheduled"
+        }
+      ],
+      "containerStatuses": [
+        {
+          "containerID": "containerd://b541fecb58cdf43796c4949f68fdd2b2734d015d0773d8274023156acf43de6d",
+          "image": "docker.io/library/rahbar-api:final-review",
+          "imageID": "sha256:348c495e6e3993923e66ce4b4d9d5a876a44ed4622cd40b80493b011adac7991",
+          "lastState": {},
+          "name": "api",
+          "ready": false,
+          "restartCount": 0,
+          "started": false,
+          "state": {
+            "terminated": {
+              "containerID": "containerd://b541fecb58cdf43796c4949f68fdd2b2734d015d0773d8274023156acf43de6d",
+              "exitCode": 0,
+              "finishedAt": "2026-11-08T10:09:01Z",
+              "reason": "Completed",
+              "startedAt": "2026-11-08T10:08:59Z"
+            }
+          },
+          "volumeMounts": [
+            {
+              "mountPath": "/tmp",
+              "name": "tmp"
+            }
+          ]
+        }
+      ],
+      "hostIP": "172.18.0.2",
+      "hostIPs": [
+        {
+          "ip": "172.18.0.2"
+        }
+      ],
+      "phase": "Succeeded",
+      "podIP": "10.244.223.133",
+      "podIPs": [
+        {
+          "ip": "10.244.223.133"
+        }
+      ],
+      "qosClass": "Burstable",
+      "startTime": "2026-11-08T10:07:04Z"
+    }
+  },
+  "node_postrouting_rules": "-P POSTROUTING ACCEPT\n-A POSTROUTING -m comment --comment \"kubernetes postrouting rules\" -j KUBE-POSTROUTING\n-A POSTROUTING -d 192.168.65.254/32 -j DOCKER_POSTROUTING\n-A POSTROUTING -m comment --comment \"cali:0i8pjzKKPyA34aQD\" -j cali-POSTROUTING\n",
+  "network_note": "No temporary host-specific NAT rule; default-deny plus exact model /32 TCP 11434 egress. Windows listener/firewall unchanged."
+}

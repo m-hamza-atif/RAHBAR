@@ -26,7 +26,8 @@ def main():
                        'policyTypes': ['Egress'], 'egress': [{'to': [{'ipBlock': {'cidr': f'{address}/32'}}],
                                     'ports': [{'protocol': 'TCP', 'port': args.port}]}]}}
     (target / 'model-egress.yaml').write_text(yaml.safe_dump(policy, sort_keys=False), encoding='utf-8')
-    patch = {'apiVersion': 'v1', 'kind': 'ConfigMap', 'metadata': {'name': 'rahbar-config'},
+    patch = {'apiVersion': 'v1', 'kind': 'ConfigMap',
+             'metadata': {'name': 'rahbar-config', 'namespace': 'rahbar'},
              'data': {'OLLAMA_BASE_URL': f'http://{address}:{args.port}'}}
     kustomization = {'apiVersion': 'kustomize.config.k8s.io/v1beta1', 'kind': 'Kustomization',
                      'resources': [f'../{args.profile}', 'model-egress.yaml'],

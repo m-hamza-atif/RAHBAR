@@ -10,7 +10,7 @@ The FAST-NUCES corpus and fictional CI fixtures are deliberately separate profil
 Fixture answers are not university policy advice.
 
 The badge points to the actual workflow; it does not certify unpublished changes.
-See [verification](docs/PARTNER-B-VERIFICATION.md) for measured results and pending work.
+See [final review](docs/FINAL-REVIEW.md) for measured results and pending work.
 
 ```mermaid
 flowchart LR
@@ -59,6 +59,11 @@ real Chroma 1.0.12 and Redis, deterministic stub embeddings/generation, 384 dime
 floor .15, cache .90 and chunks 512/64. Choose an unused cluster name/port before
 creation. The helper writes `.artifacts/kubeconfig`, preserving the default context.
 Kind exposes only loopback 18080 through the infrastructure Ingress controller.
+The pod subnet is `10.244.0.0/16`; the helper seeds Calico with that same range
+before startup. Choose a different non-overlapping range in `k8s/kind.yaml` before
+creating a cluster if your host/model network uses it. Older clusters created
+with `192.168.0.0/16` overlap Docker Desktop's Windows-host address and require a
+new dedicated cluster to use these defaults; `--existing` does not migrate CIDRs.
 
 ```powershell
 docker build --provenance=false -t rahbar-api:dev api

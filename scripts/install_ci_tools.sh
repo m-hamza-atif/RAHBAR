@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 # Portable installs, no sudo and no system modification. Versions are deliberate.
-# Pass only the tools a job uses; no arguments preserves the local all-tools setup.
+# CI uses the Go module proxy (or Trivy's official container), independently of
+# GitHub release downloads. Local installs retain the release/API fallback.
 mkdir -p .tools
 scratch=$(mktemp -d)
-trap 'rm -f "$scratch/download" "$scratch/metadata" "$scratch/binary"; rmdir "$scratch"' EXIT
+container_id=''
+cleanup() {
+  if [[ -n "$container_id" ]]; then docker rm "$container_id" >/dev/null; fi
+  rm -f "$scratch/download" "$scratch/metadata" "$scratch/binary" "$scratch/kind" "$scratch/kubeconform" "$scratch/actionlint"
+  rmdir "$scratch"
+}
+trap cleanup EXIT
 curl_options=(--fail --location --silent --show-error --retry 3 --retry-all-errors
               --retry-delay 2 --connect-timeout 15 --max-time 90 --retry-max-time 120)
 
@@ -30,25 +37,45 @@ if [[ $# -eq 0 ]]; then set -- kind kubeconform trivy actionlint; fi
 for tool in "$@"; do
   case "$tool" in
     kind)
-      release kubernetes-sigs/kind v0.27.0 kind-linux-amd64
-      cp "$scratch/download" "$scratch/binary"
+      repo=kubernetes-sigs/kind; tag=v0.27.0; asset=kind-linux-amd64; module=sigs.k8s.io/kind
       ;;
     kubeconform)
-      release yannh/kubeconform v0.6.7 kubeconform-linux-amd64.tar.gz
-      tar -xzOf "$scratch/download" kubeconform > "$scratch/binary"
+      repo=yannh/kubeconform; tag=v0.6.7; asset=kubeconform-linux-amd64.tar.gz; module=github.com/yannh/kubeconform/cmd/kubeconform
       ;;
     trivy)
-      release aquasecurity/trivy v0.76.2 trivy_0.76.2_Linux-64bit.tar.gz
-      tar -xzOf "$scratch/download" trivy > "$scratch/binary"
+      repo=aquasecurity/trivy; tag=v0.76.2; asset=trivy_0.76.2_Linux-64bit.tar.gz; module=''
       ;;
     actionlint)
-      release rhysd/actionlint v1.7.7 actionlint_1.7.7_linux_amd64.tar.gz
-      tar -xzOf "$scratch/download" actionlint > "$scratch/binary"
+      repo=rhysd/actionlint; tag=v1.7.7; asset=actionlint_1.7.7_linux_amd64.tar.gz; module=github.com/rhysd/actionlint/cmd/actionlint
       ;;
     *) echo "Unknown CI tool: $tool" >&2; exit 2 ;;
   esac
+  if [[ -x ".tools/$tool" && -f ".tools/$tool.version" && $(cat ".tools/$tool.version") == "$tag" ]]; then
+    echo "Using cached $tool $tag"
+    continue
+  fi
+  if [[ "${CI_TOOL_SOURCE:-release}" == source ]]; then
+    if [[ "$tool" == trivy ]]; then
+      container_id=$(docker create "aquasec/trivy:${tag#v}")
+      docker cp "$container_id:/usr/local/bin/trivy" "$scratch/binary"
+      docker rm "$container_id" >/dev/null
+      container_id=''
+    else
+      GOBIN="$scratch" GOPROXY=https://proxy.golang.org CGO_ENABLED=0 \
+        go install -trimpath -ldflags="-s -w" "$module@$tag"
+      mv "$scratch/$tool" "$scratch/binary"
+    fi
+  else
+    release "$repo" "$tag" "$asset"
+    if [[ "$tool" == kind ]]; then
+      cp "$scratch/download" "$scratch/binary"
+    else
+      tar -xzOf "$scratch/download" "$tool" > "$scratch/binary"
+    fi
+  fi
   chmod +x "$scratch/binary"
   mv -f "$scratch/binary" ".tools/$tool"
+  printf '%s\n' "$tag" > ".tools/$tool.version"
   echo "Installed $tool"
 done
 if [[ -n "${GITHUB_PATH:-}" ]]; then echo "$PWD/.tools" >> "$GITHUB_PATH"; fi
